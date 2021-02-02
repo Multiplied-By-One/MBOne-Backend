@@ -1,0 +1,16 @@
+{
+  "plugins": [
+    "source-map-support",
+    "@babel/plugin-proposal-private-methods"
+  ],
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "node": true
+        }
+      }
+    ]
+  ]
+}
