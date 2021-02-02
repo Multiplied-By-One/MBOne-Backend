@@ -1,7 +1,7 @@
 # package directories
 node_modules
 jspm_packages
-db\data\
+data\*
 
 # Serverless directories
 .serverless
