@@ -2,6 +2,7 @@ import getConnection from './db/connection.js'
 
 
 export async function getUser(evt){
+    console.log("test")
     let connection = await getConnection()
 }
 
