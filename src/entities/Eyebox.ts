@@ -1,8 +1,8 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
 import { EyeAccount } from "./EyeAccount";
 
-@Index("FKEyebox762662", ["senderId"], {})
-@Index("FKEyebox105158", ["recieverId"], {})
+@Index("FKEyeboxToSenderId", ["senderId"], {})
+@Index("FKEyeboxToRecieverId", ["recieverId"], {})
 @Entity("Eyebox", { schema: "mbo" })
 export class Eyebox {
   @Column("int", { primary: true, name: "ID" })
@@ -17,7 +17,7 @@ export class Eyebox {
   @Column("varchar", { name: "SubjectLine", nullable: true, length: 64 })
   public subjectLine: string | null;
 
-  @Column("timestamp", { name: "tStamp", default: () => "CURRENT_TIMESTAMP" })
+  @Column("datetime", { name: "tStamp"})
   public tStamp: Date;
 
   @Column("varchar", { name: "MessageBody", nullable: true, length: 255 })

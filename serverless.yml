@@ -49,19 +49,8 @@ functions:
   apiRequest:
     handler: handler.request
     events:
-    # User entity
-      - http:
-          path: /api/user
-          method: get
-          cors: true
-      - http:
-          path: /api/user
-          method: post
-          cors: true
-      - http:
-          path: /api/user
-          method: put
-          cors: true
+      - http: ANY /
+      - http: 'ANY {proxy+}'
 
 plugins:
   - serverless-webpack

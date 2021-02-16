@@ -12,7 +12,7 @@ import { User } from "./User";
 import { MeetingEntry } from "./MeetingEntry";
 import { Reminders } from "./Reminders";
 
-@Index("FKHeadmate61032", ["userId"], {})
+@Index("FKHeadmateToUserId", ["userId"], {})
 @Entity("Headmate", { schema: "mbo" })
 export class Headmate {
   @PrimaryGeneratedColumn({ type: "int", name: "ID" })

@@ -9,8 +9,8 @@ import {
 import { Headmate } from "./Headmate";
 import { Meeting } from "./Meeting";
 
-@Index("FKMeetingEnt22570", ["meetingId"], {})
-@Index("FKMeetingEnt106269", ["headmateId"], {})
+@Index("FKMeetingToMeetingId", ["meetingId"], {})
+@Index("FKMeetingEntHeadmateId", ["headmateId"], {})
 @Entity("MeetingEntry", { schema: "mbo" })
 export class MeetingEntry {
   @PrimaryGeneratedColumn({ type: "int", name: "ID" })
@@ -22,7 +22,7 @@ export class MeetingEntry {
   @Column("int", { name: "HeadmateID" })
   public headmateId: number;
 
-  @Column("timestamp", { name: "tStamp", default: () => "CURRENT_TIMESTAMP" })
+  @Column("datetime", { name: "tStamp"})
   public tStamp: Date;
 
   @Column("varchar", { name: "Mbody", nullable: true, length: 255 })

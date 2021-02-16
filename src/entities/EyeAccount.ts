@@ -1,19 +1,11 @@
-import {
-  Column,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from "typeorm";
+import {Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn,} from "typeorm";
 import { User } from "./User";
 import { Headmate } from "./Headmate";
 import { Eyebox } from "./Eyebox";
 import { Journal } from "./Journal";
 
-@Index("FKEyeAccount185881", ["userId"], {})
-@Index("FKEyeAccount757655", ["headmateId"], {})
+@Index("FKEyeAccountToUserId", ["userId"], {})
+@Index("FKEyeAccountToHeadmateId", ["headmateId"], {})
 @Entity("EyeAccount", { schema: "mbo" })
 export class EyeAccount {
   @PrimaryGeneratedColumn({ type: "int", name: "ID" })

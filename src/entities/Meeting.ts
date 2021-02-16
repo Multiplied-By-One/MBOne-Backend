@@ -10,7 +10,7 @@ import {
 import { MeetingSpace } from "./MeetingSpace";
 import { MeetingEntry } from "./MeetingEntry";
 
-@Index("FKMeeting888209", ["meetingSpaceId"], {})
+@Index("FKMeetingToMeetingSpaceId", ["meetingSpaceId"], {})
 @Entity("Meeting", { schema: "mbo" })
 export class Meeting {
   @PrimaryGeneratedColumn({ type: "int", name: "ID" })
@@ -26,8 +26,8 @@ export class Meeting {
   })
   public mtitle: string;
 
-  @Column("timestamp", { name: "tStamp", default: () => "CURRENT_TIMESTAMP" })
-  public tStamp: Date;
+  @Column("datetime", { name: "tStamp"})
+  public datetime: Date;
 
   @ManyToOne(() => MeetingSpace, (meetingSpace) => meetingSpace.meetings, {
     onDelete: "RESTRICT",

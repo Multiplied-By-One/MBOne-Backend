@@ -29,7 +29,8 @@ module.exports = (async () => {
         },
         {
           test: /\.tsx?$/,
-          use: 'ts-loader',
+          use: 'babel-loader',
+          include: __dirname,
           exclude: /node_modules/,
         }
       ],

@@ -10,7 +10,7 @@ import {
 import { Meeting } from "./Meeting";
 import { User } from "./User";
 
-@Index("FKMeetingSpa648188", ["userId"], {})
+@Index("FKMeetingSpaUserId", ["userId"], {})
 @Entity("MeetingSpace", { schema: "mbo" })
 export class MeetingSpace {
   @PrimaryGeneratedColumn({ type: "int", name: "ID" })

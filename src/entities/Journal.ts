@@ -10,7 +10,7 @@ import {
 import { EyeAccount } from "./EyeAccount";
 import { JournalEntry } from "./JournalEntry";
 
-@Index("FKJournal544483", ["eyeAccountId"], {})
+@Index("FKJournalToEyeAccountId", ["eyeAccountId"], {})
 @Entity("Journal", { schema: "mbo" })
 export class Journal {
   @PrimaryGeneratedColumn({ type: "int", name: "ID" })

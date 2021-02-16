@@ -8,7 +8,7 @@ import {
 } from "typeorm";
 import { Journal } from "./Journal";
 
-@Index("FKJournalEnt338509", ["journalId"], {})
+@Index("FKJournalEntToJournalId", ["journalId"], {})
 @Entity("JournalEntry", { schema: "mbo" })
 export class JournalEntry {
   @PrimaryGeneratedColumn({ type: "int", name: "ID" })
@@ -17,7 +17,7 @@ export class JournalEntry {
   @Column("int", { name: "JournalID" })
   public journalId: number;
 
-  @Column("timestamp", { name: "tStamp", default: () => "CURRENT_TIMESTAMP" })
+  @Column("datetime", { name: "tStamp" })
   public tStamp: Date;
 
   @Column("varchar", {

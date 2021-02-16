@@ -1,58 +1,19 @@
-import {getUser, updateUser, createUser} from './src/user';
+import serverless from 'serverless-http';
+import bodyParser from 'body-parser';
+import express from 'express';
+import {bindRoutes} from './src/routes';
 
-// Map your functions to http events here
-const RESOURCE_MAP = {
-    '/api/user': { 
-      GET: getUser,
-      PUT: updateUser,
-      POST: createUser,
-    },
-};
+const app = express()
 
-// eslint-disable-next-line import/prefer-default-export
-export async function request(event) {
-  return Promise.resolve()
-    .then(() => {
-      if (event.httpMethod && event.resource) {
-        console.log('PROCESSING HTTP EVENT', event.httpMethod, event.resource);
-        const resource = RESOURCE_MAP[event.resource];
-        const resourceMethod = resource && resource[event.httpMethod];
-        if (!resourceMethod) return Promise.reject(new Error('[404] Route Not Found'));
-        return resourceMethod(event);
-      }
-      console.log('UNKNOWN EVENT', event);
-      return {};
-    })
-    .then(sendProxySuccess.bind(), sendProxyError.bind()); // eslint-disable-line
-}
+app.use(bodyParser.json({ strict: false }));
 
-const sendProxySuccess = (responseObj) => {
-  const response = responseObj && responseObj.statusCode ? responseObj : {
-    statusCode: 200,
-    body: JSON.stringify(responseObj),
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-    },
-  };
-  return response;
-};
+//Bind app routing
+bindRoutes(app)
 
-const sendProxyError = (err) => {
-  console.log('ERROR:', err.stack || err);
-  let status = 500;
-  let message = err.message || JSON.stringify(err);
-  const m = err.message && err.message.match(/^\[(\d+)\] *(.*)$/);
-  if (m) {
-    [, status, message] = m;
-  }
-  const response = {
-    statusCode: status,
-    body: JSON.stringify({ errorMessage: message }),
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-    },
-  };
-  return response;
+let handler =  serverless(app);
+export async function request (event, context) {
+  // you can do other things here
+  const result = await handler(event, context);
+  // and here
+  return result;
 };
