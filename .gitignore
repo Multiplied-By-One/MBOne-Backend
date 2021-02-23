@@ -6,3 +6,4 @@ data/database.sqlite
 # Serverless directories
 .serverless
 .webpack
+.env.local

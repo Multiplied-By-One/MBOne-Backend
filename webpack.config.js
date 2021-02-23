@@ -3,7 +3,6 @@ const slsw = require('serverless-webpack');
 const nodeExternals = require('webpack-node-externals');
 
 module.exports = (async () => {
-  const accountId = await slsw.lib.serverless.providers.aws.getAccountId();
   return {
     entry: slsw.lib.entries,
     target: 'node',
@@ -16,7 +15,9 @@ module.exports = (async () => {
     stats: 'minimal', // https://github.com/serverless-heaven/serverless-webpack#stats
     plugins: [
       new webpack.DefinePlugin({
-        AWS_ACCOUNT_ID: `${accountId}`,
+        AWS_ACCOUNT_ID: slsw.lib.webpack.isLocal ? 
+          'LocalStub' :
+          await slsw.lib.serverless.providers.aws.getAccountId()
       }),
     ],
     module: {

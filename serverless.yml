@@ -7,8 +7,8 @@ custom:
       forceExclude:
         - aws-sdk
 
-  profiles:
-    local: mbo
+  #profiles:
+  #  localdev: mbo
     # dev: profile-dev
     # staging: profile-staging
     # prod: profile-prod
@@ -18,9 +18,9 @@ custom:
       SERVERLESS_STAGE: ${self:provider.stage}
       SERVERLESS_VERSION: ${file(./package.json):version}
       SERVERLESS_REGION: ${opt:region, self:provider.region}
-    local:
+    localdev:
       <<: *default_env
-      stage: local
+      stage: localdev
     dev:
       <<: *default_env
       stage: dev
@@ -34,12 +34,12 @@ custom:
 provider:
   name: aws
   runtime: nodejs12.x
-  stage: ${opt:stage, 'local'} # Set the default stage used. Default is dev
+  stage: ${opt:stage, 'localdev'} # Set the default stage used. Default is dev
   region: ${opt:region, 'us-east-1'} # Overwrite the default region used. Default is us-east-1
-  profile: ${self:custom.profiles.${self:provider.stage}, 'mbo'}
+  #profile: ${self:custom.profiles.${self:provider.stage}, 'mbo'}
   memorySize: 512 # Overwrite the default memory size. Default is 1024
   logRetentionInDays: 30 # Set the default RetentionInDays for a CloudWatch LogGroup
-  environment: ${self:custom.environment.${self:provider.stage}}
+  #environment: ${self:custom.environment.${self:provider.stage}}
 
 package: # Optional deployment packaging configuration
   include: # Specify the directories and files which should be included in the deployment package
@@ -53,6 +53,7 @@ functions:
       - http: 'ANY {proxy+}'
 
 plugins:
+  - serverless-dotenv-plugin
   - serverless-webpack
   - serverless-offline
 
