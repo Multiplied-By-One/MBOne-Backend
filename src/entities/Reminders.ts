@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  BaseEntity
 } from "typeorm";
 import { User } from "./User";
 import { Headmate } from "./Headmate";
@@ -12,7 +13,7 @@ import { Headmate } from "./Headmate";
 @Index("FKRemindersToAssigneeId", ["assigneeId"], {})
 @Index("FKRemindersToHeadmateId", ["headmateId"], {})
 @Entity("Reminders", { schema: "mbo" })
-export class Reminders {
+export class Reminders extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "ID" })
   public id: number;
 

@@ -1,4 +1,4 @@
-import {Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn,} from "typeorm";
+import {Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, BaseEntity} from "typeorm";
 import { User } from "./User";
 import { Headmate } from "./Headmate";
 import { Eyebox } from "./Eyebox";
@@ -7,7 +7,7 @@ import { Journal } from "./Journal";
 @Index("FKEyeAccountToUserId", ["userId"], {})
 @Index("FKEyeAccountToHeadmateId", ["headmateId"], {})
 @Entity("EyeAccount", { schema: "mbo" })
-export class EyeAccount {
+export class EyeAccount extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "ID" })
   public id: number;
 

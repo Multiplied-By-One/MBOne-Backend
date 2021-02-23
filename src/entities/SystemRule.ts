@@ -1,9 +1,9 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, BaseEntity } from "typeorm";
 import { User } from "./User";
 
 @Index("FKSystemRule913825", ["userId"], {})
 @Entity("SystemRule", { schema: "mbo" })
-export class SystemRule {
+export class SystemRule extends BaseEntity {
   @Column("int", { primary: true, name: "ID" })
   public id: number;
 

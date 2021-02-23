@@ -1,10 +1,10 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, BaseEntity } from "typeorm";
 import { EyeAccount } from "./EyeAccount";
 
 @Index("FKEyeboxToSenderId", ["senderId"], {})
 @Index("FKEyeboxToRecieverId", ["recieverId"], {})
 @Entity("Eyebox", { schema: "mbo" })
-export class Eyebox {
+export class Eyebox extends BaseEntity {
   @Column("int", { primary: true, name: "ID" })
   public id: number;
 

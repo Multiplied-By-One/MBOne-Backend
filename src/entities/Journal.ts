@@ -6,13 +6,14 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  BaseEntity
 } from "typeorm";
 import { EyeAccount } from "./EyeAccount";
 import { JournalEntry } from "./JournalEntry";
 
 @Index("FKJournalToEyeAccountId", ["eyeAccountId"], {})
 @Entity("Journal", { schema: "mbo" })
-export class Journal {
+export class Journal extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "ID" })
   public id: number;
 

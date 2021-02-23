@@ -1,4 +1,4 @@
-import { Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, OneToMany, PrimaryGeneratedColumn, Column, BaseEntity} from "typeorm";
 import { EyeAccount } from "./EyeAccount";
 import { Headmate } from "./Headmate";
 import { MeetingSpace } from "./MeetingSpace";
@@ -6,9 +6,15 @@ import { Reminders } from "./Reminders";
 import { SystemRule } from "./SystemRule";
 
 @Entity("User", { schema: "mbo" })
-export class User {
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "ID" })
   public id: number;
+  
+  @Column()
+  public googleAccountId: number;
+
+  @Column()
+  public emailAddress: string;
 
   @OneToMany(() => EyeAccount, (eyeAccount) => eyeAccount.user)
   public eyeAccounts: EyeAccount[];

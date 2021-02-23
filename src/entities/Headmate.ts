@@ -6,6 +6,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  BaseEntity
 } from "typeorm";
 import { EyeAccount } from "./EyeAccount";
 import { User } from "./User";
@@ -14,7 +15,7 @@ import { Reminders } from "./Reminders";
 
 @Index("FKHeadmateToUserId", ["userId"], {})
 @Entity("Headmate", { schema: "mbo" })
-export class Headmate {
+export class Headmate extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "ID" })
   public id: number;
 

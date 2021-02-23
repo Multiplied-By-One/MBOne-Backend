@@ -5,12 +5,13 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  BaseEntity
 } from "typeorm";
 import { Journal } from "./Journal";
 
 @Index("FKJournalEntToJournalId", ["journalId"], {})
 @Entity("JournalEntry", { schema: "mbo" })
-export class JournalEntry {
+export class JournalEntry extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "ID" })
   public id: number;
 

@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  BaseEntity
 } from "typeorm";
 import { Headmate } from "./Headmate";
 import { Meeting } from "./Meeting";
@@ -12,7 +13,7 @@ import { Meeting } from "./Meeting";
 @Index("FKMeetingToMeetingId", ["meetingId"], {})
 @Index("FKMeetingEntHeadmateId", ["headmateId"], {})
 @Entity("MeetingEntry", { schema: "mbo" })
-export class MeetingEntry {
+export class MeetingEntry extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "ID" })
   public id: number;
 

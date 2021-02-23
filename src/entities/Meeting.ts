@@ -6,13 +6,14 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  BaseEntity
 } from "typeorm";
 import { MeetingSpace } from "./MeetingSpace";
 import { MeetingEntry } from "./MeetingEntry";
 
 @Index("FKMeetingToMeetingSpaceId", ["meetingSpaceId"], {})
 @Entity("Meeting", { schema: "mbo" })
-export class Meeting {
+export class Meeting extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "ID" })
   public id: number;
 
