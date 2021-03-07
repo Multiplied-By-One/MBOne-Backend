@@ -46,6 +46,7 @@
     "global": "^4.4.0",
     "migrate": "^1.7.0",
     "passport": "^0.4.1",
+    "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.0",
     "serverless-http": "^2.7.0",
     "source-map-support": "^0.5.16",

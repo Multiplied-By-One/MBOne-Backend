@@ -7,3 +7,4 @@ data/database.sqlite
 .serverless
 .webpack
 .env.local
+.env.localdev.local
