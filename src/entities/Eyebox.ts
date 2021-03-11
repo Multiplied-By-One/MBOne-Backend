@@ -2,7 +2,7 @@ import { Column, Entity, Index, JoinColumn, ManyToOne, BaseEntity } from "typeor
 import { EyeAccount } from "./EyeAccount";
 
 @Index("FKEyeboxToSenderId", ["senderId"], {})
-@Index("FKEyeboxToRecieverId", ["recieverId"], {})
+@Index("FKEyeboxToReceiverId", ["receiverId"], {})
 @Entity("Eyebox", { schema: "mbo" })
 export class Eyebox extends BaseEntity {
   @Column("int", { primary: true, name: "ID" })
@@ -11,8 +11,8 @@ export class Eyebox extends BaseEntity {
   @Column("int", { name: "SenderID" })
   public senderId: number;
 
-  @Column("int", { name: "RecieverID" })
-  public recieverId: number;
+  @Column("int", { name: "ReceiverID" })
+  public receiverId: number;
 
   @Column("varchar", { name: "SubjectLine", nullable: true, length: 64 })
   public subjectLine: string | null;
@@ -27,8 +27,8 @@ export class Eyebox extends BaseEntity {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",
   })
-  @JoinColumn([{ name: "RecieverID", referencedColumnName: "id" }])
-  public reciever: EyeAccount;
+  @JoinColumn([{ name: "ReceiverID", referencedColumnName: "id" }])
+  public receiver: EyeAccount;
 
   @ManyToOne(() => EyeAccount, (eyeAccount) => eyeAccount.eyeboxes2, {
     onDelete: "RESTRICT",

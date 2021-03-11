@@ -1,0 +1,8 @@
+entity: Headmate
+items:
+  headmate{1..10}:
+    hName: ($current)
+    user: '@user{1..5}'
+    eyeAccounts:
+      - '@eyeAccount{1..5}'
+      - '@eyeAccount{6..10}'

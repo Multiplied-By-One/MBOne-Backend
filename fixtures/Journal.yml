@@ -1,0 +1,4 @@
+entity: Journal
+items:
+  journal{1..10}:
+    eyeAccount: '@eyeAccount{1..10}'
