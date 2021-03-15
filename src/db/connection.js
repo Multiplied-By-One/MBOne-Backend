@@ -1,12 +1,17 @@
-import { createConnection } from "typeorm"
+import { createConnection, getConnection as getConn } from "typeorm"
 import entities from './entities'
 
-let conn = null
 export default async function getConnection(){
-    //Cache connection on a per request basis using closure
+    let conn = null;
+    try{
+        conn = getConn()
+    } catch (e){}
+
+    // In the event the current connection is not null use it!
     if(conn !== null){
         return conn
     }
+
     // In the event we are using a local connection use sqllite
     const options = {
         type: "sqlite",
@@ -16,4 +21,12 @@ export default async function getConnection(){
     }
     conn = await createConnection(options)
     return conn
+}
+
+// Close connection if we need to after request
+export async function closeConnection(){
+    try{
+        conn = getConn()
+        await conn.close()
+    } catch (e){}
 }

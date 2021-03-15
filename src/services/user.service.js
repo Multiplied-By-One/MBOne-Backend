@@ -30,8 +30,8 @@ export async function getUserRepository(){
 }
 
 export async function getUserById(id){
-    let user = getUserRepository()
-    return user
+    let rep = await getUserRepository()
+    return await rep.findOne({id: id})
 }
 
 /**

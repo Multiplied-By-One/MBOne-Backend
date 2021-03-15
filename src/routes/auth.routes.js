@@ -6,7 +6,9 @@ let router = Router()
 let passport = getConfiguredPassport()
 
 router.get('/auth/google/callback', passport.authenticate("google", {
-    scope: ["profile", "email"]
+    scope: ["profile", "email"],
+    session: false,
+    failureRedirect: '/api/v1/auth/google/callback'
 }), googleAuth)
 
 export default router
