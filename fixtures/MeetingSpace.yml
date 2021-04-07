@@ -1,0 +1,4 @@
+entity: MeetingSpace
+items:
+  meetingSpace{1..10}:
+    user: '@user{1..5}'

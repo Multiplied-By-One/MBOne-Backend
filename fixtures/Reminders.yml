@@ -1,0 +1,8 @@
+entity: Reminders
+items:
+  reminder{1..10}:
+    assignee: '@user{1..5}'
+    headmate: '@headmate{1..10}'
+    time: '{{date.past}}'
+    message: '{{lorem.sentence}}'
+    completion: false
