@@ -8,4 +8,4 @@ npm run db:create
 npm run start
 ```
 
-This is a test branch
+This is a test branch.
