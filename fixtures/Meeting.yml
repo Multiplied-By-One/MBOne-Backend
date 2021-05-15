@@ -1,0 +1,5 @@
+entity: Meeting
+items:
+  meeting{1..10}:
+    datetime: '{{date.past}}'
+    meetingSpace: '@meetingSpace{1..10}'

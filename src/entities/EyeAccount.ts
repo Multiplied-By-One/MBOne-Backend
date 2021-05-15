@@ -49,7 +49,7 @@ export class EyeAccount extends BaseEntity {
   @JoinColumn([{ name: "HeadmateID", referencedColumnName: "id" }])
   public headmate: Headmate;
 
-  @OneToMany(() => Eyebox, (eyebox) => eyebox.reciever)
+  @OneToMany(() => Eyebox, (eyebox) => eyebox.receiver)
   public eyeboxes: Eyebox[];
 
   @OneToMany(() => Eyebox, (eyebox) => eyebox.sender)

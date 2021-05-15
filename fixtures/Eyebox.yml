@@ -1,0 +1,8 @@
+entity: Eyebox
+items:
+  eyeBox{1..10}:
+    subjectLine: 'Subject Title'
+    tStamp: '{{date.past}}'
+    messageBody: '{{lorem.sentence}}'
+    sender: '@eyeAccount{1..10}'
+    receiver: '@eyeAccount{1..10}'

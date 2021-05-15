@@ -1,0 +1,7 @@
+entity: JournalEntry
+items:
+  journalEntry{1..10}:
+    tStamp: '{{date.past}}'
+    etitle: 'Journal entry title ($current)'
+    ebody: '{{lorem.text}}'
+    journal: '@journal{1..10}'
