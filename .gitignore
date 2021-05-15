@@ -11,3 +11,4 @@ data/database.sqlite
 
 # Ignore yarn (Focus should be on NPM)
 yarn.lock
+
