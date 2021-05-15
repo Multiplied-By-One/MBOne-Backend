@@ -9,6 +9,7 @@ import {MeetingSpace} from '../entities/MeetingSpace'
 import {Reminders} from '../entities/Reminders'
 import {SystemRule} from '../entities/SystemRule'
 import {User} from '../entities/User'
+import {Traits} from '../entities/Traits'
 
 export default [
     EyeAccount, 
@@ -21,5 +22,6 @@ export default [
     MeetingSpace,
     Reminders,
     SystemRule,
-    User
+    User,
+    Traits
 ]

@@ -12,6 +12,6 @@ export function generateJWT(user, expiresIn = null){
     return sign({
         id: user.id
     }, process.env.JWT_SECRET, {
-        expiresIn: expiresIn ?? DEFAULT_JWT_TTL
+        expiresIn: expiresIn === null ? DEFAULT_JWT_TTL : expiresIn
     })
 }
