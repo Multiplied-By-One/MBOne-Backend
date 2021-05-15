@@ -1,0 +1,7 @@
+entity: MeetingEntry
+items:
+  meetingEntry{1..10}:
+    meeting: '@meeting{1..10}'
+    headmate: '@headmate{1..10}'
+    tStamp: '{{date.past}}'
+    mbody: '{{lorem.text}}'

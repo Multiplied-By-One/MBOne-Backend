@@ -1,0 +1,5 @@
+entity: User
+items:
+  user{1..5}:
+    googleAccountId: ($current*100000)
+    emailAddress: '{{internet.email}}'
