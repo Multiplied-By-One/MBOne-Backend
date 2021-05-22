@@ -8,3 +8,7 @@ data/database.sqlite
 .webpack
 .env.local
 .env.localdev.local
+
+# Ignore yarn (Focus should be on NPM)
+yarn.lock
+

@@ -1,0 +1,5 @@
+entity: Traits
+items:
+  trait{1..10}:
+    headmateId: '@headmate{1..10}'
+    trait: '{{lorem.sentence}}'
