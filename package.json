@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "handler.js",
   "scripts": {
-    "start": "serverless offline start --stage='localdev'",
+    "start": "serverless offline start --stage='localdev' --skipCacheInvalidation",
     "test": "jest",
     "lint": "node node_modules/eslint/bin/eslint.js .",
     "fixtures": "fixtures ./fixtures --config ./ormconfig.js --sync --require=ts-node/register --require=tsconfig-paths/register",
@@ -45,10 +45,14 @@
   },
   "dependencies": {
     "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
     "global": "^4.4.0",
+    "http-status-codes": "^2.1.4",
+    "jsonwebtoken": "^8.5.1",
     "migrate": "^1.7.0",
     "passport": "^0.4.1",
+    "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.0",
     "serverless-http": "^2.7.0",
     "source-map-support": "^0.5.16",

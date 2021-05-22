@@ -1,7 +1,8 @@
 import {getUserById} from '../services/user.service'
 
 export function getUser(req, res){
-    let user = getUserById(res.params)
+    res.status(200)
+       .send(JSON.stringify(req.user))
 }
 
 export function createUser(req, res){

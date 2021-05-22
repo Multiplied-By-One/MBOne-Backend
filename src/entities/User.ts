@@ -10,10 +10,10 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "ID" })
   public id: number;
   
-  @Column()
+  @Column("int")
   public googleAccountId: number;
 
-  @Column()
+  @Column("varchar", { name: "GmailAddress", nullable: false, length: 255 })
   public emailAddress: string;
 
   @OneToMany(() => EyeAccount, (eyeAccount) => eyeAccount.user)
