@@ -12,6 +12,7 @@ import { EyeAccount } from "./EyeAccount";
 import { User } from "./User";
 import { MeetingEntry } from "./MeetingEntry";
 import { Reminders } from "./Reminders";
+import { Traits } from "./Traits";
 
 @Index("FKHeadmateToUserId", ["userId"], {})
 @Entity("Headmate", { schema: "mbo" })
@@ -31,6 +32,9 @@ export class Headmate extends BaseEntity {
   @Column("int", { name: "hAge", nullable: true })
   public hAge: number | null;
 
+  @Column("int", { name: "hImg", nullable: true })
+  public hImg: string | null;
+
   @OneToMany(() => EyeAccount, (eyeAccount) => eyeAccount.headmate)
   public eyeAccounts: EyeAccount[];
 
@@ -46,4 +50,7 @@ export class Headmate extends BaseEntity {
 
   @OneToMany(() => Reminders, (reminders) => reminders.headmate)
   public reminders: Reminders[];
+
+  @OneToMany(() => Traits, (traits) => traits.headmate)
+  public traits: Traits[];
 }

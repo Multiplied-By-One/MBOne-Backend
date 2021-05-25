@@ -23,6 +23,9 @@
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "24.9.0",
     "babel-loader": "8.0.6",
+    "babel-plugin-polyfill-corejs2": "^0.2.0",
+    "babel-plugin-polyfill-corejs3": "^0.2.0",
+    "babel-plugin-polyfill-regenerator": "^0.2.0",
     "babel-plugin-source-map-support": "2.1.1",
     "eslint": "6.8.0",
     "eslint-config-airbnb": "18.0.1",
@@ -58,5 +61,6 @@
     "source-map-support": "^0.5.16",
     "ts-node": "^9.1.1",
     "typeorm": "^0.2.30"
-  }
+  },
+  "engines" : { "node" : ">=15" }
 }
