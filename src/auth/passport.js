@@ -1,10 +1,16 @@
 import passport from 'passport'
-import {Strategy as PassportJWTStrategy} from 'passport-jwt';
 import { Strategy as StrategyGoogle } from 'passport-google-oauth20'
-import { async } from 'regenerator-runtime'
-import { getOneOrCreateByGoogleDetails, getUserById } from '../services/user.service'
+import { getOneOrCreateByGoogleDetails } from '../services/user.service'
 
 export function getConfiguredPassport(){
+    passport.serializeUser((user, next) => {
+        next(null, user)
+    })
+
+    passport.deserializeUser((user, next) => {
+        next(null, user)
+    })
+
     //Setup google oauth
     passport.use(new StrategyGoogle({
             clientID: process.env.GOOGLE_OAUTH_CLIENT_ID,
@@ -16,9 +22,10 @@ export function getConfiguredPassport(){
         }
     ))
 
+/*
     //Setup google authentication
     passport.use(new PassportJWTStrategy({
-        jwtFromRequest: req => req.cookies.jwt,
+        jwtFromRequest: req => req.cookies.accessToken,
         secretOrKey: process.env.JWT_SECRET,
     }, async (jwt_payload, done) => {
         // Load user by id if we have one!
@@ -29,6 +36,7 @@ export function getConfiguredPassport(){
             return done(e, false)
         }
     }))
+ */   
 
     return passport
 }

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getConfiguredPassport } from "../auth/passport"
-import googleAuth from "../controllers/auth.controller"
+import { googleAuth, logout } from "../controllers/auth.controller"
 
 let router = Router()
 let passport = getConfiguredPassport()
@@ -10,5 +10,8 @@ router.get('/auth/google/callback', passport.authenticate("google", {
     session: false,
     failureRedirect: '/api/v1/auth/google/callback'
 }), googleAuth)
+
+// router.post('/logout', logout)
+router.get('/logout', logout)
 
 export default router

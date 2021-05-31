@@ -1,6 +1,6 @@
 import getConnection from '../db/connection'
-import {User} from '../entities/User.ts'
-import { Equal } from "typeorm";
+import { getConnection as getConn, getRepository } from 'typeorm'
+import { User } from '../entities/User.ts'
 
 /**
  * Supplies a new google account based on a newly authed user's google account ID.
@@ -30,8 +30,8 @@ export async function getUserRepository(){
 }
 
 export async function getUserById(id){
-    let rep = await getUserRepository()
-    return await rep.findOne({id: id})
+    const rep = await getUserRepository()
+    return rep.findOne({id: id})
 }
 
 /**
@@ -49,6 +49,50 @@ export async function createUser(fields){
     return user
 }
 
-export async function updateUser(evt){
-    let connection = await getConnection()
+/**
+ * Update user
+ * 
+ * @param {Object|string|int|boolean} queryParams Query parameters in typeorm style 
+ * @param {Object} updateParams Update parameters in typeorm style
+ * @returns {Object} User
+ */
+export async function updateUser(queryParams, updateParams){
+    const userRepos = await getUserRepository()
+    let user = null
+    if(typeof queryParams === 'string' || typeof queryParams === 'number' || typeof queryParams === 'bigint' || typeof queryParams === 'boolean') {
+        user = await userRepos.findOne(queryParams)
+    } else {
+        user = await userRepos.find(queryParams)
+    }
+
+    for (const [key, value] of Object.entries(updateParams)) {
+        user[key] = value
+    }
+    
+    return userRepos.save(user)
+}
+
+/**
+ * Update refresh token of a user
+ * 
+ * @param {int} id User id of the user to be updated
+ * @param {string} refreshToken Refresh token
+ * @param {string} refreshTokenExpiryDt Refresh token expirty datetime
+ * @returns {undefined}
+ */
+export async function updateRefreshToken(id, refreshToken, refreshTokenExpiryDt) {
+    try {
+        await getConn()
+            .createQueryBuilder()
+            .update(User)
+            .set({
+                refreshToken,
+                refreshTokenExpiryDt
+            })
+            .where('id = :id', { id })
+            .execute()
+    } catch(err) {
+        console.log('Error in user.service.js updateRefreshToken')
+        console.log(err)
+    }
 }
