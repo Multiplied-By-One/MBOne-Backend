@@ -1,5 +1,6 @@
+import { verify as jwtVerify } from 'jsonwebtoken'
 import { generateJWT, generateJwtExpiryDate } from '../auth/jwt';
-import { updateUser, updateRefreshToken } from '../services/user.service'
+import { updateUser } from '../services/user.service'
 
 export const googleAuth = async (req, res) => {
     const DEFAULT_ACCESS_TOKEN_TTL = process.env.DEFAULT_ACCESS_TOKEN_TTL
@@ -13,11 +14,10 @@ export const googleAuth = async (req, res) => {
         })
     }
 
-    // store user info into session cookie
+    // generate login hash from username
     const user = req.user
-    req.session.user = user
-
-    // Sets access and refresh token cookies from authenticated google user
+ 
+    // Sets access and refresh token cookies and loginHash cookie from authenticated google user
     const accessTokenCookieOptions = {
         secure: false,
         httpOnly: true,
@@ -30,10 +30,10 @@ export const googleAuth = async (req, res) => {
         accessTokenCookieOptions.secure = true
         refreshTokenCookieOptions.secure = true
     }
-    const accessToken = generateJWT(req.user, DEFAULT_ACCESS_TOKEN_TTL)
+    const accessToken = generateJWT(user, DEFAULT_ACCESS_TOKEN_TTL)
     res.cookie('accessToken', accessToken, accessTokenCookieOptions)
 
-    const refreshToken = generateJWT(req.user, DEFAULT_REFRESH_TOKEN_TTL)
+    const refreshToken = generateJWT(user, DEFAULT_REFRESH_TOKEN_TTL)
     res.cookie('refreshToken', refreshToken, refreshTokenCookieOptions)
 
     // Store refresh token and expire info associated with this user in storage
@@ -79,12 +79,35 @@ export const googleAuth = async (req, res) => {
  * @returns {LogoutJson}
  */
 export const logout = (req, res) => {
-    if(req && req.session && req.session.user) {
-        const { id: uid } = req.session.user
+    let uid = null
+
+    if(req && req.cookies && req.cookies.accessToken) {
+        try {
+            const decodedJwtPayload = jwtVerify(req.cookies.accessToken, process.env.JWT_SECRET)
+            uid = decodedJwtPayload.id
+        } catch(err) {
+            if(err.name === 'TokenExpiredError') {
+                try {
+                    if(req.cookies.refreshToken) {
+                        const decodedJwtPayload = jwtVerify(req.cookies.refreshToken, process.env.JWT_SECRET)
+                        uid = decodedJwtPayload.id
+                    }
+                } catch(err) {
+                    console.error('Error in auth.controller.js logout')
+                    console.error(err)
+                }
+            }
+        }
+
         if(uid) {
             try {
                 // delete user refresh token from storage
-                updateRefreshToken(uid, null, null)
+                const queryParams = uid
+                const updateParams = {
+                    refreshToken: null,
+                    refreshTokenExpiryDt: null,
+                }
+                updateUser(queryParams, updateParams)
             } catch(err) {
                 console.log('Error in auth.controller.js logout')
                 console.log(err)
@@ -93,7 +116,6 @@ export const logout = (req, res) => {
     }
 
     req.logout()
-    req.session = null
 
     // remove cookies from browser
     res.clearCookie('accessToken')

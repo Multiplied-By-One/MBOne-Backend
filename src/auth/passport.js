@@ -3,6 +3,7 @@ import { Strategy as StrategyGoogle } from 'passport-google-oauth20'
 import { getOneOrCreateByGoogleDetails } from '../services/user.service'
 
 export function getConfiguredPassport(){
+    /*
     passport.serializeUser((user, next) => {
         next(null, user)
     })
@@ -10,6 +11,7 @@ export function getConfiguredPassport(){
     passport.deserializeUser((user, next) => {
         next(null, user)
     })
+    */
 
     //Setup google oauth
     passport.use(new StrategyGoogle({

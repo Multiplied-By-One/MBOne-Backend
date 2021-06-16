@@ -59,7 +59,7 @@ export async function createUser(fields){
 export async function updateUser(queryParams, updateParams){
     const userRepos = await getUserRepository()
     let user = null
-    if(typeof queryParams === 'string' || typeof queryParams === 'number' || typeof queryParams === 'bigint' || typeof queryParams === 'boolean') {
+    if(typeof queryParams === 'number' || typeof queryParams === 'bigint') {
         user = await userRepos.findOne(queryParams)
     } else {
         user = await userRepos.find(queryParams)
@@ -72,20 +72,14 @@ export async function updateUser(queryParams, updateParams){
     return userRepos.save(user)
 }
 
-/**
- * Update refresh token of a user
- * 
- * @param {int} id User id of the user to be updated
- * @param {string} refreshToken Refresh token
- * @param {string} refreshTokenExpiryDt Refresh token expirty datetime
- * @returns {undefined}
- */
-export async function updateRefreshToken(id, refreshToken, refreshTokenExpiryDt) {
+/*
+export async function updateRefreshTokenAndLoginHash(id, loginHash, refreshToken, refreshTokenExpiryDt) {
     try {
         await getConn()
             .createQueryBuilder()
             .update(User)
             .set({
+                loginHash,
                 refreshToken,
                 refreshTokenExpiryDt
             })
@@ -96,3 +90,4 @@ export async function updateRefreshToken(id, refreshToken, refreshTokenExpiryDt)
         console.log(err)
     }
 }
+*/
