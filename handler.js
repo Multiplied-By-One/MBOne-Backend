@@ -18,14 +18,6 @@ bindPassportToApp(app)
 //Bind app routing
 bindRoutes(app)
 
-// custom default error handler
-app.use((err, req, res, next) => {
-  res.status(500).json({
-    err: 'InternalErr',
-    message: 'Internal error'
-  })
-})
-
 let handler =  serverless(app);
 export async function request (event, context) {
   // you can do other things here

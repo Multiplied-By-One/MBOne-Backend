@@ -2,6 +2,7 @@ import userRouter from './user.routes'
 import authRouter from './auth.routes' 
 import { getConfiguredPassport } from "../auth/passport"
 import { validateJwt } from '../auth/jwt'
+import errHandler from '../libs/errHandler'
 
 const API_PREFIX = process.env.API_PREFIX
 export function bindRoutes(app){
@@ -13,9 +14,13 @@ export function bindRoutes(app){
 
     //Apply JWT authentication to all registered routes
     app.use(API_PREFIX, validateJwt, userRouter);
-
+/*
     app.use('*', (req, res, next) => {
         let err = new Error('Page does not exist')
         next(err)
     })
+*/
+
+    // custom default error handler
+    app.use(errHandler)
 }

@@ -1,6 +1,10 @@
 import { sign as jwtSign, verify as jwtVerify } from 'jsonwebtoken'
+import { userService } from '../di-container'
+import logger from '../libs/logger'
 import { generateTokenCookieOptions } from '../libs/cookies'
-import { getUserById, updateUser } from '../services/user.service'
+// import { getUserById, updateUser } from '../services/user.service'
+import UnauthorizedError from '../errors/UnauthorizedError'
+import ForbiddenError from '../errors/ForbiddenError'
 
 const attachJwtPayloadToRequest = (req, { requestProperty='auth', payload, fieldsToInclude=[] }) => {
     req[requestProperty] = {}
@@ -38,19 +42,15 @@ export const generateJwtExpiryDate = expiryTtl => new Date(new Date().getTime() 
 */
 export const validateJwt = async (req, res, next) => {
     if(!req || (req && !req.cookies)) {
-        console.log('Missing cookies')
-        return res.status(403).json({
-            err: 'AuthErr',
-            errmsg: 'Forbidden',
-        })
+        logger('ERROR', { logMessage: 'Missing cookies' })
+        next(new ForbiddenError('Missing cookies'))
+        return
     }
 
     if(!req.cookies.accessToken || !req.cookies.refreshToken) {
-        console.log('Missing access or refresh token')
-        return res.status(403).json({
-            err: 'AuthErr',
-            errmsg: 'Forbidden',
-        })
+        logger('ERROR', { logMessage: 'Missing access or refresh token' })
+        next(new ForbiddenError('Missing cookies'))
+        return
     }
     const accessToken = req.cookies.accessToken
     const refreshToken = req.cookies.refreshToken
@@ -73,28 +73,18 @@ export const validateJwt = async (req, res, next) => {
                 const { id: uid} = jwtVerify(refreshToken, process.env.JWT_SECRET)
 
                 // extract stored refresh token from storage
-                user = await getUserById(uid)
+                user = await userService.getUserById(uid)
                 if(!user) {
-                    console.error('Error in jwt.js validateJwt')
-                    console.error('User not found in db')
-                    return res.status(401)
-                        .set('WWW-Authenticate', 'Bearer err="InvalidToken" errmsg="Access token expired"')
-                        .json({
-                            err: 'InvalidToken',
-                            errmsg: 'Access token expired'
-                    })
+                    logger('ERROR', { logMessage: 'User not found in db' })
+                    next(new UnauthorizedError('Access token expired', { name: 'InvalidToken' }))
+                    return
                 }
 
                 const { refreshToken: storedRefreshToken, refreshTokenExpiryDt } = user
                 if(!refreshTokenExpiryDt || storedRefreshToken !== refreshToken) {
-                    console.error('Error in jwt.js validateJwt')
-                    console.error('Stored refresh token different from cookie refresh token')
-                    return res.status(401)
-                        .set('WWW-Authenticate', 'Bearer err="InvalidToken" errmsg="Access token expired"')
-                        .json({
-                            err: 'InvalidToken',
-                            errmsg: 'Access token expired'
-                    })
+                    logger('ERROR', { logMessage: 'Stored refresh token different from cookie refresh token' })
+                    next(new UnauthorizedError('Access token expired', { name: 'InvalidToken' }))
+                    return
                 }
     
                 // if refresh token expired already, issue both access and refresh tokens
@@ -112,18 +102,13 @@ export const validateJwt = async (req, res, next) => {
                         refreshToken: newRefreshToken,
                         refreshTokenExpiryDt: newRefreshTokenExpiryDt,
                     }
-                    updateUser(queryParams, updateParams)
+                    userService.updateUser(queryParams, updateParams)
 
                 }
             } catch(err) {
-                console.error('Error in jwt.js validateJwt')
-                console.error(err)
-                return res.status(401)
-                    .set('WWW-Authenticate', 'Bearer err="InvalidToken" errmsg="Access token expired"')
-                    .json({
-                        err: 'InvalidToken',
-                        errmsg: 'Access token expired'
-                    })
+                logger('ERROR', { errobj: err })
+                next(new UnauthorizedError('Access token expired', { name: 'InvalidToken' }))
+                return
             }
 
             // issue access token
@@ -141,15 +126,10 @@ export const validateJwt = async (req, res, next) => {
             next()
         } else {
             // Errors other than TokenExpiredError are rejected
-            console.error('Error in validateJwt')
-            console.error('Token error other than TokenExpiredError')
-            console.error(err)
-            return res.status(401)
-                .set('WWW-Authenticate', 'Bearer err="InvalidToken" errmsg="Access token expired"')
-                .json({
-                    err: 'InvalidToken',
-                    errmsg: 'Access token expired'
-                })
+            logger('ERROR', { logMessage: 'Token error other than TokenExpiredError' })
+            logger('ERROR', { errobj: err })
+            next(new UnauthorizedError('Access token expired', { name: 'InvalidToken' }))
+            return
         }
     } 
 }

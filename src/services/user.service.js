@@ -1,5 +1,5 @@
 import getConnection from '../db/connection'
-import { getConnection as getConn, getRepository } from 'typeorm'
+// import { getConnection as getConn, getRepository } from 'typeorm'
 import { User } from '../entities/User.ts'
 
 /**
@@ -29,10 +29,12 @@ export async function getUserRepository(){
     return connection.getRepository(User)
 }
 
+/*
 export async function getUserById(id){
     const rep = await getUserRepository()
     return rep.findOne({id: id})
 }
+*/
 
 /**
  * Creates a new user object persists it to the DB then returns it
@@ -49,14 +51,8 @@ export async function createUser(fields){
     return user
 }
 
-/**
- * Update user
- * 
- * @param {Object|string|int|boolean} queryParams Query parameters in typeorm style 
- * @param {Object} updateParams Update parameters in typeorm style
- * @returns {Object} User
- */
-export async function updateUser(queryParams, updateParams){
+/*
+export const updateUser = async (queryParams, updateParams) => {
     const userRepos = await getUserRepository()
     let user = null
     if(typeof queryParams === 'number' || typeof queryParams === 'bigint') {
@@ -71,23 +67,39 @@ export async function updateUser(queryParams, updateParams){
     
     return userRepos.save(user)
 }
+*/
 
-/*
-export async function updateRefreshTokenAndLoginHash(id, loginHash, refreshToken, refreshTokenExpiryDt) {
-    try {
-        await getConn()
-            .createQueryBuilder()
-            .update(User)
-            .set({
-                loginHash,
-                refreshToken,
-                refreshTokenExpiryDt
-            })
-            .where('id = :id', { id })
-            .execute()
-    } catch(err) {
-        console.log('Error in user.service.js updateRefreshToken')
-        console.log(err)
+export const userService = ({}) => {
+    const getUserById = async (id) => {
+        const rep = await getUserRepository()
+        return rep.findOne({id: id})
+    }
+
+    /**
+     * Update user
+     * 
+     * @param {Object|string|int|boolean} queryParams Query parameters in typeorm style 
+     * @param {Object} updateParams Update parameters in typeorm style
+     * @returns {Object} User
+     */
+    const updateUser = async (queryParams, updateParams) => {
+        const userRepos = await getUserRepository()
+        let user = null
+        if(typeof queryParams === 'number' || typeof queryParams === 'bigint') {
+            user = await userRepos.findOne(queryParams)
+        } else {
+            user = await userRepos.find(queryParams)
+        }
+
+        for (const [key, value] of Object.entries(updateParams)) {
+            user[key] = value
+        }
+        
+        return userRepos.save(user)
+    }
+
+    return {
+        getUserById,
+        updateUser
     }
 }
-*/
