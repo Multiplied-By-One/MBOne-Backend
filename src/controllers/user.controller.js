@@ -1,5 +1,5 @@
 // import {getUserById} from '../services/user.service'
-import { NotFoundError } from '../errors/NotFoundError'
+import NotFoundError from '../errors/NotFoundError'
 
 /*
 export async function getUser(req, res){

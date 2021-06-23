@@ -7,7 +7,7 @@ const errHandler = (err, req, res, next) => {
     console.error(err.stack)
 
     if(err instanceof UserFacingError) {
-      if(err.name === 'InvalidToken') {
+      if(err.name === 'InvalidTokenError') {
         return res.status(err.statusCode)
         .set('WWW-Authenticate', `Bearer err="${err.name}" errmsg="${err.errmsg}"`)
         .json({

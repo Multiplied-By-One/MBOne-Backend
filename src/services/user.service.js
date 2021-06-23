@@ -1,5 +1,4 @@
 import getConnection from '../db/connection'
-// import { getConnection as getConn, getRepository } from 'typeorm'
 import { User } from '../entities/User.ts'
 
 /**

@@ -1,17 +1,19 @@
-// import { verify as jwtVerify } from 'jsonwebtoken'
 import { generateJWT, generateJwtExpiryDate } from '../auth/jwt';
-import { userService } from '../di-container'
-import { updateUser } from '../services/user.service'
-import { generateLogString } from '../libs/logger'
 import UnauthorizedError from '../errors/UnauthorizedError'
 
-export const authController = ({ jwt, logger }) => {
+export const authController = ({ config, jwt, logger, userService }) => {
+    console.log('logger')
+    console.log(logger)
+    
+
     const googleAuth = async (req, res, next) => {
-        const DEFAULT_ACCESS_TOKEN_TTL = process.env.DEFAULT_ACCESS_TOKEN_TTL
-        const DEFAULT_REFRESH_TOKEN_TTL = process.env.DEFAULT_REFRESH_TOKEN_TTL
+        const DEFAULT_ACCESS_TOKEN_TTL = config.get('security:jwt:access_token_ttl')
+        const DEFAULT_ACCESS_TOKEN_TTL_IN_SEC = config.get('security:jwt:access_token_ttl_in_sec')
+        const DEFAULT_REFRESH_TOKEN_TTL = config.get('security:jwt:refresh_token_ttl')
+        const DEFAULT_REFRESH_TOKEN_TTL_IN_SEC = config.get('security:jwt:refresh_token_ttl_in_sec')
 
         if(!req || (req && !req.user)) {
-            logger('ERROR', { filename: __filename, logMessage: 'User not found in request' })
+            logger.log(logger.LOGLEVEL.ERROR, { filename: __filename, logMessage: 'User not found in request' })
             next(new UnauthorizedError('Login error'))
             return
         }
@@ -28,7 +30,7 @@ export const authController = ({ jwt, logger }) => {
             secure: false,
             httpOnly: true,
         }
-        if(process.env.NODE_ENV === 'prod') {
+        if(config.get('app:node_env')=== 'prod') {
             accessTokenCookieOptions.secure = true
             refreshTokenCookieOptions.secure = true
         }
@@ -42,13 +44,13 @@ export const authController = ({ jwt, logger }) => {
         const queryParams = user.id
         const updateParams = {
             refreshToken,
-            refreshTokenExpiryDt: generateJwtExpiryDate(process.env.DEFAULT_REFRESH_TOKEN_TTL_IN_SEC * 1000)
+            refreshTokenExpiryDt: generateJwtExpiryDate(DEFAULT_REFRESH_TOKEN_TTL_IN_SEC * 1000)
         }
         try {
             // await updateUser(queryParams, updateParams)
             userService.updateUser(queryParams, updateParams)
         } catch(err) {
-            logger('ERROR', { errobj: err })
+            logger.log(logger.LOGLEVEL.ERROR, { errobj: err })
             next(new UnauthorizedError('Login error'))
             return
         }
@@ -59,7 +61,7 @@ export const authController = ({ jwt, logger }) => {
             refreshToken,
             tokenType: 'bearer',
             // scope: ,
-            expiresIn: process.env.DEFAULT_ACCESS_TOKEN_TTL_IN_SEC,
+            expiresIn: DEFAULT_ACCESS_TOKEN_TTL_IN_SEC,
         })
     }
 
@@ -79,22 +81,23 @@ export const authController = ({ jwt, logger }) => {
      * @returns {LogoutJson}
      */
     const logout = (req, res) => {
+        const JWT_SECRET = config.get('security:jwt:secret')
         let uid = null
 
         if(req && req.cookies && req.cookies.accessToken) {
             try {
-                const decodedJwtPayload = jwt.verify(req.cookies.accessToken, process.env.JWT_SECRET)
+                const decodedJwtPayload = jwt.verify(req.cookies.accessToken, JWT_SECRET)
                 uid = decodedJwtPayload.id
             } catch(err) {
                 if(err.name === 'TokenExpiredError') {
                     try {
                         if(req.cookies.refreshToken) {
-                            const decodedJwtPayload = jwt.verify(req.cookies.refreshToken, process.env.JWT_SECRET)
+                            const decodedJwtPayload = jwt.verify(req.cookies.refreshToken, JWT_SECRET)
                             uid = decodedJwtPayload.id
                         }
                     } catch(err) {
-                        logger('ERROR', { filename: __filename, logMessage: 'Error during logout' })
-                        logger('ERROR', { errobj: err })
+                        logger.log(logger.LOGLEVEL.ERROR, { filename: __filename, logMessage: 'Error during logout' })
+                        logger.log(logger.LOGLEVEL.ERROR, { errobj: err })
                     }
                 }
             }
@@ -109,8 +112,8 @@ export const authController = ({ jwt, logger }) => {
                     }
                     userService.updateUser(queryParams, updateParams)
                 } catch(err) {
-                    logger('ERROR', { filename: __filename, logMessage: 'Error during logout' })
-                    logger('ERROR', { errobj: err })
+                    logger.log(logger.LOGLEVEL.WARN, { filename: __filename, logMessage: 'Error during logout' })
+                    logger.log(logger.LOGLEVEL.WARN, { errobj: err })
                 }
             }
         }

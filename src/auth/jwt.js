@@ -1,10 +1,11 @@
 import { sign as jwtSign, verify as jwtVerify } from 'jsonwebtoken'
-import { userService } from '../di-container'
-import logger from '../libs/logger'
+import { userService, logger } from '../di-container'
+import config from '../libs/config'
 import { generateTokenCookieOptions } from '../libs/cookies'
-// import { getUserById, updateUser } from '../services/user.service'
-import UnauthorizedError from '../errors/UnauthorizedError'
+import InvalidTokenError from '../errors/InvalidTokenError'
 import ForbiddenError from '../errors/ForbiddenError'
+
+const ACCESS_TOKEN_TTL = config.get('security:jwt:access_token_ttl')
 
 const attachJwtPayloadToRequest = (req, { requestProperty='auth', payload, fieldsToInclude=[] }) => {
     req[requestProperty] = {}
@@ -19,10 +20,10 @@ const attachJwtPayloadToRequest = (req, { requestProperty='auth', payload, field
  * @param {int|string} expiresIn expressed in seconds or a string describing a time span zeit/ms. Eg: 60, "2 days", "10h", "7d"
  * @returns {string} Standard JWT payload string 
  */
-export function generateJWT(user, expiresIn = process.env.DEFAULT_ACCESS_TOKEN_TTL){
+export function generateJWT(user, expiresIn = ACCESS_TOKEN_TTL){
     return jwtSign({
         id: user.id
-    }, process.env.JWT_SECRET, {
+    }, config.get('security:jwt:secret'), {
         expiresIn
     })
 }
@@ -42,13 +43,13 @@ export const generateJwtExpiryDate = expiryTtl => new Date(new Date().getTime() 
 */
 export const validateJwt = async (req, res, next) => {
     if(!req || (req && !req.cookies)) {
-        logger('ERROR', { logMessage: 'Missing cookies' })
+        logger.log(logger.LOGLEVEL.ERROR, { logMessage: 'Missing cookies' })
         next(new ForbiddenError('Missing cookies'))
         return
     }
 
     if(!req.cookies.accessToken || !req.cookies.refreshToken) {
-        logger('ERROR', { logMessage: 'Missing access or refresh token' })
+        logger.log(logger.LOGLEVEL.ERROR, { logMessage: 'Missing access or refresh token' })
         next(new ForbiddenError('Missing cookies'))
         return
     }
@@ -56,7 +57,7 @@ export const validateJwt = async (req, res, next) => {
     const refreshToken = req.cookies.refreshToken
 
     try {
-        const decodedJwtPayload = jwtVerify(accessToken, process.env.JWT_SECRET)
+        const decodedJwtPayload = jwtVerify(accessToken, config.get('security:jwt:secret'))
         attachJwtPayloadToRequest(req, {
             payload: decodedJwtPayload,
             fieldsToInclude: [ 'id' ]
@@ -70,52 +71,50 @@ export const validateJwt = async (req, res, next) => {
 
             try {
                 // extract user id from refresh token
-                const { id: uid} = jwtVerify(refreshToken, process.env.JWT_SECRET)
+                const { id: uid} = jwtVerify(refreshToken, config.get('security:jwt:secret'))
 
                 // extract stored refresh token from storage
                 user = await userService.getUserById(uid)
                 if(!user) {
-                    logger('ERROR', { logMessage: 'User not found in db' })
-                    next(new UnauthorizedError('Access token expired', { name: 'InvalidToken' }))
+                    logger.log(logger.LOGLEVEL.ERROR, { logMessage: 'User not found in db' })
+                    next(new InvalidTokenError('Access token expired'))
                     return
                 }
-
                 const { refreshToken: storedRefreshToken, refreshTokenExpiryDt } = user
                 if(!refreshTokenExpiryDt || storedRefreshToken !== refreshToken) {
-                    logger('ERROR', { logMessage: 'Stored refresh token different from cookie refresh token' })
-                    next(new UnauthorizedError('Access token expired', { name: 'InvalidToken' }))
+                    logger.log(logger.LOGLEVEL.ERROR, { logMessage: 'Stored refresh token different from cookie refresh token' })
+                    next(new InvalidTokenError('Access token expired'))
                     return
                 }
     
                 // if refresh token expired already, issue both access and refresh tokens
-                if(refreshTokenExpiryDt > new Date()) {
+                if(refreshTokenExpiryDt < new Date()) {
                     // generate new refresh token
-                    const newRefreshToken = generateJWT(user, process.env.DEFAULT_REFRESH_TOKEN_TTL)
+                    const newRefreshToken = generateJWT(user, config.get('security:jwt:refresh_token_ttl'))
                     
                     // set new refresh token in cookie
-                    res.cookie('refreshToken', newRefreshToken, generateTokenCookieOptions(process.env.NODE_ENV))
+                    res.cookie('refreshToken', newRefreshToken, generateTokenCookieOptions(config.get('app:node_env')))
     
                     // save new refresh token in storage
-                    const newRefreshTokenExpiryDt = generateJwtExpiryDate(process.env.DEFAULT_REFRESH_TOKEN_TTL_IN_SEC * 1000)
+                    const newRefreshTokenExpiryDt = generateJwtExpiryDate(config.get('security:jwt:refresh_token_ttl_in_sec') * 1000)
                     const queryParams = uid
                     const updateParams = {
                         refreshToken: newRefreshToken,
                         refreshTokenExpiryDt: newRefreshTokenExpiryDt,
                     }
                     userService.updateUser(queryParams, updateParams)
-
                 }
             } catch(err) {
-                logger('ERROR', { errobj: err })
-                next(new UnauthorizedError('Access token expired', { name: 'InvalidToken' }))
+                logger.log(logger.LOGLEVEL.ERROR, { errobj: err })
+                next(new InvalidTokenError('Access token expired'))
                 return
             }
 
             // issue access token
-            const newAccessToken = generateJWT(user, process.env.DEFAULT_ACCESS_TOKEN_TTL)
+            const newAccessToken = generateJWT(user, config.get('security:jwt:access_token_ttl'))
             
             // set access token in cookie
-            res.cookie('accessToken', newAccessToken, generateTokenCookieOptions(process.env.NODE_ENV))
+            res.cookie('accessToken', newAccessToken, generateTokenCookieOptions(config.get('app:node_env')))
 
             attachJwtPayloadToRequest(req, {
                 payload: user,
@@ -126,9 +125,9 @@ export const validateJwt = async (req, res, next) => {
             next()
         } else {
             // Errors other than TokenExpiredError are rejected
-            logger('ERROR', { logMessage: 'Token error other than TokenExpiredError' })
-            logger('ERROR', { errobj: err })
-            next(new UnauthorizedError('Access token expired', { name: 'InvalidToken' }))
+            logger.log(logger.LOGLEVEL.ERROR, { logMessage: 'Token error other than TokenExpiredError' })
+            logger.log(logger.LOGLEVEL.ERROR, { errobj: err })
+            next(new InvalidTokenError('Access token expired'))
             return
         }
     } 

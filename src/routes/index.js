@@ -1,10 +1,12 @@
 import userRouter from './user.routes' 
-import authRouter from './auth.routes' 
+import authRouter from './auth.routes'
 import { getConfiguredPassport } from "../auth/passport"
 import { validateJwt } from '../auth/jwt'
 import errHandler from '../libs/errHandler'
+import config from '../libs/config'
 
-const API_PREFIX = process.env.API_PREFIX
+const API_PREFIX = config.get('app:api_prefix')
+
 export function bindRoutes(app){
     app.use(API_PREFIX, authRouter);
     
@@ -20,7 +22,6 @@ export function bindRoutes(app){
         next(err)
     })
 */
-
     // custom default error handler
     app.use(errHandler)
 }
