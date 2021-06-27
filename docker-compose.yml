@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  mbo_backend:
+    build:
+      context: .
+    ports:
+      - "3000:3000"
+    container_name: "mbo_backend"
+    volumes:
+      - './package.json:/app/package.json'
+      - './serverless.yml:/app/serverless.yml'
+      - './package-lock.json:/app/yarn.lock'
+      - './src/:/app/src/'
+      - './data/:/app/data/'
+      - './.env:/app/.env'
+      - './.env.localdev:/app/.env.localdev'
+      - './.env.localdev.local:/app/.env.localdev.local'

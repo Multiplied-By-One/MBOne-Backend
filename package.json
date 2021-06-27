@@ -3,13 +3,14 @@
   "version": "0.0.1",
   "main": "handler.js",
   "scripts": {
-    "start": "serverless offline start --stage='localdev' --skipCacheInvalidation",
+    "start": "npm run version:test && nodemon --watch src -L --exec \"serverless offline start --stage='localdev' --skipCacheInvalidation\"",
     "test": "jest",
     "lint": "node node_modules/eslint/bin/eslint.js .",
     "fixtures": "fixtures ./fixtures --config ./ormconfig.js --sync --require=ts-node/register --require=tsconfig-paths/register",
+    "version:test": "check-node-version --node 14",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js",
     "db:create": "ts-node ./node_modules/typeorm/cli.js schema:sync",
-    "db:clean": "shx rm data/database.sqlite"
+    "db:clean": "shx rm data/database.sqlite || true"
   },
   "license": "MIT",
   "devDependencies": {
@@ -24,12 +25,14 @@
     "babel-jest": "24.9.0",
     "babel-loader": "8.0.6",
     "babel-plugin-source-map-support": "2.1.1",
+    "check-node-version": "^4.1.0",
     "eslint": "6.8.0",
     "eslint-config-airbnb": "18.0.1",
     "eslint-plugin-import": "2.20.0",
     "eslint-plugin-jsx-a11y": "6.2.3",
     "eslint-plugin-react": "7.18.0",
     "jest": "24.9.0",
+    "nodemon": "^2.0.7",
     "regenerator-runtime": "0.13.3",
     "serverless": "1.61.1",
     "serverless-dotenv-plugin": "^3.2.0",

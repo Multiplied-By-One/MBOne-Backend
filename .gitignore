@@ -2,6 +2,7 @@
 node_modules
 jspm_packages
 data/database.sqlite
+data/.database.built
 
 # Serverless directories
 .serverless
