@@ -20,7 +20,7 @@ const attachJwtPayloadToRequest = (req, { requestProperty='auth', payload, field
  * @param {int|string} expiresIn expressed in seconds or a string describing a time span zeit/ms. Eg: 60, "2 days", "10h", "7d"
  * @returns {string} Standard JWT payload string 
  */
-export function generateJWT(user, expiresIn = ACCESS_TOKEN_TTL){
+export async function generateJWT(user, expiresIn = ACCESS_TOKEN_TTL){
     return jwtSign({
         id: user.id
     }, config.get('security:jwt:secret'), {
@@ -50,14 +50,14 @@ export const validateJwt = async (req, res, next) => {
 
     if(!req.cookies.accessToken || !req.cookies.refreshToken) {
         logger.log(logger.LOGLEVEL.ERROR, { logMessage: 'Missing access or refresh token' })
-        next(new ForbiddenError('Missing cookies'))
+        next(new ForbiddenError('Missing access or refresh token'))
         return
     }
     const accessToken = req.cookies.accessToken
     const refreshToken = req.cookies.refreshToken
 
     try {
-        const decodedJwtPayload = jwtVerify(accessToken, config.get('security:jwt:secret'))
+        const decodedJwtPayload = await jwtVerify(accessToken, config.get('security:jwt:secret'))
         attachJwtPayloadToRequest(req, {
             payload: decodedJwtPayload,
             fieldsToInclude: [ 'id' ]
@@ -71,7 +71,7 @@ export const validateJwt = async (req, res, next) => {
 
             try {
                 // extract user id from refresh token
-                const { id: uid} = jwtVerify(refreshToken, config.get('security:jwt:secret'))
+                const { id: uid} = await jwtVerify(refreshToken, config.get('security:jwt:secret'))
 
                 // extract stored refresh token from storage
                 user = await userService.getUserById(uid)
@@ -90,7 +90,7 @@ export const validateJwt = async (req, res, next) => {
                 // if refresh token expired already, issue both access and refresh tokens
                 if(refreshTokenExpiryDt < new Date()) {
                     // generate new refresh token
-                    const newRefreshToken = generateJWT(user, config.get('security:jwt:refresh_token_ttl'))
+                    const newRefreshToken = await generateJWT(user, config.get('security:jwt:refresh_token_ttl'))
                     
                     // set new refresh token in cookie
                     res.cookie('refreshToken', newRefreshToken, generateTokenCookieOptions(config.get('app:node_env')))
@@ -111,7 +111,7 @@ export const validateJwt = async (req, res, next) => {
             }
 
             // issue access token
-            const newAccessToken = generateJWT(user, config.get('security:jwt:access_token_ttl'))
+            const newAccessToken = await generateJWT(user, config.get('security:jwt:access_token_ttl'))
             
             // set access token in cookie
             res.cookie('accessToken', newAccessToken, generateTokenCookieOptions(config.get('app:node_env')))

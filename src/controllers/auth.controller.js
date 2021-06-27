@@ -2,10 +2,6 @@ import { generateJWT, generateJwtExpiryDate } from '../auth/jwt';
 import UnauthorizedError from '../errors/UnauthorizedError'
 
 export const authController = ({ config, jwt, logger, userService }) => {
-    console.log('logger')
-    console.log(logger)
-    
-
     const googleAuth = async (req, res, next) => {
         const DEFAULT_ACCESS_TOKEN_TTL = config.get('security:jwt:access_token_ttl')
         const DEFAULT_ACCESS_TOKEN_TTL_IN_SEC = config.get('security:jwt:access_token_ttl_in_sec')
@@ -34,10 +30,10 @@ export const authController = ({ config, jwt, logger, userService }) => {
             accessTokenCookieOptions.secure = true
             refreshTokenCookieOptions.secure = true
         }
-        const accessToken = generateJWT(user, DEFAULT_ACCESS_TOKEN_TTL)
+        const accessToken = await generateJWT(user, DEFAULT_ACCESS_TOKEN_TTL)
         res.cookie('accessToken', accessToken, accessTokenCookieOptions)
     
-        const refreshToken = generateJWT(user, DEFAULT_REFRESH_TOKEN_TTL)
+        const refreshToken = await generateJWT(user, DEFAULT_REFRESH_TOKEN_TTL)
         res.cookie('refreshToken', refreshToken, refreshTokenCookieOptions)
     
         // Store refresh token and expire info associated with this user in storage
@@ -47,8 +43,7 @@ export const authController = ({ config, jwt, logger, userService }) => {
             refreshTokenExpiryDt: generateJwtExpiryDate(DEFAULT_REFRESH_TOKEN_TTL_IN_SEC * 1000)
         }
         try {
-            // await updateUser(queryParams, updateParams)
-            userService.updateUser(queryParams, updateParams)
+            await userService.updateUser(queryParams, updateParams)
         } catch(err) {
             logger.log(logger.LOGLEVEL.ERROR, { errobj: err })
             next(new UnauthorizedError('Login error'))
@@ -80,19 +75,19 @@ export const authController = ({ config, jwt, logger, userService }) => {
      * @param {Object} res Response object
      * @returns {LogoutJson}
      */
-    const logout = (req, res) => {
+    const logout = async (req, res) => {
         const JWT_SECRET = config.get('security:jwt:secret')
         let uid = null
 
         if(req && req.cookies && req.cookies.accessToken) {
             try {
-                const decodedJwtPayload = jwt.verify(req.cookies.accessToken, JWT_SECRET)
+                const decodedJwtPayload = await jwt.verify(req.cookies.accessToken, JWT_SECRET)
                 uid = decodedJwtPayload.id
             } catch(err) {
                 if(err.name === 'TokenExpiredError') {
                     try {
                         if(req.cookies.refreshToken) {
-                            const decodedJwtPayload = jwt.verify(req.cookies.refreshToken, JWT_SECRET)
+                            const decodedJwtPayload = await jwt.verify(req.cookies.refreshToken, JWT_SECRET)
                             uid = decodedJwtPayload.id
                         }
                     } catch(err) {
