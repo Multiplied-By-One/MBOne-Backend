@@ -28,13 +28,6 @@ export async function getUserRepository(){
     return connection.getRepository(User)
 }
 
-/*
-export async function getUserById(id){
-    const rep = await getUserRepository()
-    return rep.findOne({id: id})
-}
-*/
-
 /**
  * Creates a new user object persists it to the DB then returns it
  * @param {int|null} fields.googleAccountId The google account Id for the new user
@@ -50,28 +43,15 @@ export async function createUser(fields){
     return user
 }
 
-/*
-export const updateUser = async (queryParams, updateParams) => {
-    const userRepos = await getUserRepository()
-    let user = null
-    if(typeof queryParams === 'number' || typeof queryParams === 'bigint') {
-        user = await userRepos.findOne(queryParams)
-    } else {
-        user = await userRepos.find(queryParams)
-    }
-
-    for (const [key, value] of Object.entries(updateParams)) {
-        user[key] = value
-    }
-    
-    return userRepos.save(user)
-}
-*/
-
 export const userService = ({}) => {
     const getUserById = async (id) => {
         const rep = await getUserRepository()
         return rep.findOne({id: id})
+    }
+
+    const getUser = async (filterParams) => {
+        const rep = await getUserRepository()
+        return rep.findOne(filterParams)
     }
 
     /**
@@ -99,6 +79,7 @@ export const userService = ({}) => {
 
     return {
         getUserById,
+        getUser,
         updateUser
     }
 }

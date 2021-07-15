@@ -1,12 +1,16 @@
+import util from 'util'
+import bcrypt from 'bcrypt'
 import { generateJWT, generateJwtExpiryDate } from '../auth/jwt';
 import UnauthorizedError from '../errors/UnauthorizedError'
+import { generateTokenCookieOptions } from '../libs/cookies'
 
 export const authController = ({ config, jwt, logger, userService }) => {
     const googleAuth = async (req, res, next) => {
         const DEFAULT_ACCESS_TOKEN_TTL = config.get('security:jwt:access_token_ttl')
-        const DEFAULT_ACCESS_TOKEN_TTL_IN_SEC = config.get('security:jwt:access_token_ttl_in_sec')
-        const DEFAULT_REFRESH_TOKEN_TTL = config.get('security:jwt:refresh_token_ttl')
-        const DEFAULT_REFRESH_TOKEN_TTL_IN_SEC = config.get('security:jwt:refresh_token_ttl_in_sec')
+        const DEFAULT_ACCESS_TOKEN_TTL_IN_SEC = parseInt(config.get('security:jwt:access_token_ttl_in_sec'))
+        const DEFAULT_REFRESH_TOKEN_TTL_IN_SEC = parseInt(config.get('security:jwt:refresh_token_ttl_in_sec'))
+        const bcryptHash = util.promisify(bcrypt.hash)
+        const SALTROUNDS = 10
 
         if(!req || (req && !req.user)) {
             logger.log(logger.LOGLEVEL.ERROR, { filename: __filename, logMessage: 'User not found in request' })
@@ -18,22 +22,19 @@ export const authController = ({ config, jwt, logger, userService }) => {
         const user = req.user
      
         // Sets access and refresh token cookies and loginHash cookie from authenticated google user
-        const accessTokenCookieOptions = {
-            secure: false,
-            httpOnly: true,
-        }
-        const refreshTokenCookieOptions = {
-            secure: false,
-            httpOnly: true,
-        }
-        if(config.get('app:node_env')=== 'prod') {
-            accessTokenCookieOptions.secure = true
-            refreshTokenCookieOptions.secure = true
-        }
+        const accessTokenCookieOptions = generateTokenCookieOptions(config.get('app:node_env'), { 
+            maxAge: DEFAULT_REFRESH_TOKEN_TTL_IN_SEC * 1000 * 2,
+         })
+        const refreshTokenCookieOptions = generateTokenCookieOptions(config.get('app:node_env'), { 
+            maxAge: DEFAULT_REFRESH_TOKEN_TTL_IN_SEC * 1000 * 2,
+         })
+
+        // generate access token
         const accessToken = await generateJWT(user, DEFAULT_ACCESS_TOKEN_TTL)
         res.cookie('accessToken', accessToken, accessTokenCookieOptions)
-    
-        const refreshToken = await generateJWT(user, DEFAULT_REFRESH_TOKEN_TTL)
+        
+        // generate refresh token
+        const refreshToken = await bcryptHash(user.emailAddress, SALTROUNDS)
         res.cookie('refreshToken', refreshToken, refreshTokenCookieOptions)
     
         // Store refresh token and expire info associated with this user in storage

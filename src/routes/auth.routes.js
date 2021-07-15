@@ -11,7 +11,6 @@ router.get('/auth/google/callback', passport.authenticate("google", {
     failureRedirect: '/api/v1/auth/google/callback'
 }), authController.googleAuth)
 
-router.post('/logout', authController.logout)
-// router.get('/logout', authController.logout)
+router.get('/logout', authController.logout)
 
 export default router

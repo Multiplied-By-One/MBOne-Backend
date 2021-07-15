@@ -1,12 +1,12 @@
-export const generateTokenCookieOptions = runningEnv => {
-    let cookieOptions = {
-        secure: false,
-        httpOnly: true
+export const generateTokenCookieOptions = (runningEnv='prod', opts={}) => {
+    let secure = true
+    if(runningEnv !== 'prod') {
+        secure = false
+    }
+    const cookieOptions = {
+        httpOnly: true,
+        secure
     }
 
-    if(runningEnv === 'prod') {
-        cookieOptions.secure = true
-    }
-
-    return cookieOptions
+    return Object.assign({}, cookieOptions, opts)
 }

@@ -14,13 +14,10 @@ function Config() {
         nconf.set('security:jwt:access_token_ttl', process.env.ACCESS_TOKEN_TTL)
     }
     if(process.env.ACCESS_TOKEN_TTL_IN_SEC) {
-        nconf.set('security:jwt.access_token_ttl_in_sec', parseInt(process.env.ACCESS_TOKEN_TTL_IN_SEC))
-    }
-    if(process.env.REFRESH_TOKEN_TTL) {
-        nconf.set('security:jwt:refresh_token_ttl', process.env.REFRESH_TOKEN_TTL)
+        nconf.set('security:jwt:access_token_ttl_in_sec', parseInt(process.env.ACCESS_TOKEN_TTL_IN_SEC))
     }
     if(process.env.REFRESH_TOKEN_TTL_IN_SEC) {
-        nconf.set('security:jwt.refresh_token_ttl_in_sec', parseInt(process.env.REFRESH_TOKEN_TTL_IN_SEC))
+        nconf.set('security:jwt:refresh_token_ttl_in_sec', parseInt(process.env.REFRESH_TOKEN_TTL_IN_SEC))
     }
 }
 
