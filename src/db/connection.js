@@ -17,7 +17,9 @@ export default async function getConnection(){
         type: "sqlite",
         database: `${process.cwd()}/data/database.sqlite`,
         entities: entities,
-        logging: true
+        logging: true,
+        // synchronize: true,
+        // cache: false,
     }
     conn = await createConnection(options)
     return conn

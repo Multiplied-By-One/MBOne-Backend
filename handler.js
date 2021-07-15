@@ -8,7 +8,7 @@ import cookieParser from 'cookie-parser';
 
 const app = express()
 
-// Setup body parsing and cookie parsing
+// Setup body parsing, cookie session, and cookie parsing
 app.use(bodyParser.json({ strict: false }))
 app.use(cookieParser())
 

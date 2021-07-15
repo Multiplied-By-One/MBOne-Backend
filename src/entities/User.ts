@@ -16,6 +16,12 @@ export class User extends BaseEntity {
   @Column("varchar", { name: "GmailAddress", nullable: false, length: 255 })
   public emailAddress: string;
 
+  @Column("varchar", { name: "refreshToken", nullable: true })
+  public refreshToken: string;
+
+  @Column("datetime", { name: "refreshTokenExpiryDt", nullable: true })
+  public refreshTokenExpiryDt: Date;
+
   @OneToMany(() => EyeAccount, (eyeAccount) => eyeAccount.user)
   public eyeAccounts: EyeAccount[];
 

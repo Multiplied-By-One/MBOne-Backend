@@ -1,6 +1,5 @@
 import getConnection from '../db/connection'
-import {User} from '../entities/User.ts'
-import { Equal } from "typeorm";
+import { User } from '../entities/User.ts'
 
 /**
  * Supplies a new google account based on a newly authed user's google account ID.
@@ -29,11 +28,6 @@ export async function getUserRepository(){
     return connection.getRepository(User)
 }
 
-export async function getUserById(id){
-    let rep = await getUserRepository()
-    return await rep.findOne({id: id})
-}
-
 /**
  * Creates a new user object persists it to the DB then returns it
  * @param {int|null} fields.googleAccountId The google account Id for the new user
@@ -49,6 +43,43 @@ export async function createUser(fields){
     return user
 }
 
-export async function updateUser(evt){
-    let connection = await getConnection()
+export const userService = ({}) => {
+    const getUserById = async (id) => {
+        const rep = await getUserRepository()
+        return rep.findOne({id: id})
+    }
+
+    const getUser = async (filterParams) => {
+        const rep = await getUserRepository()
+        return rep.findOne(filterParams)
+    }
+
+    /**
+     * Update user
+     * 
+     * @param {Object|string|int|boolean} queryParams Query parameters in typeorm style 
+     * @param {Object} updateParams Update parameters in typeorm style
+     * @returns {Object} User
+     */
+    const updateUser = async (queryParams, updateParams) => {
+        const userRepos = await getUserRepository()
+        let user = null
+        if(typeof queryParams === 'number' || typeof queryParams === 'bigint') {
+            user = await userRepos.findOne(queryParams)
+        } else {
+            user = await userRepos.find(queryParams)
+        }
+
+        for (const [key, value] of Object.entries(updateParams)) {
+            user[key] = value
+        }
+        
+        return userRepos.save(user)
+    }
+
+    return {
+        getUserById,
+        getUser,
+        updateUser
+    }
 }

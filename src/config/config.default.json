@@ -1,0 +1,10 @@
+{
+    "app": {
+        "api_prefix": "/api/v1"
+    },
+    "security": {
+        "jwt": {
+            "secret": "myjwtsecret"
+        }
+    }
+}

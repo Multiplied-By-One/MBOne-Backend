@@ -3,8 +3,9 @@ node_modules
 jspm_packages
 data/database.sqlite
 
-# Serverless directories
+# serverless
 .serverless
 .webpack
-.env.local
+.env
+.env.localdev
 .env.localdev.local
