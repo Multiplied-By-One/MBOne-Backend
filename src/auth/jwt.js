@@ -70,7 +70,7 @@ export const validateJwt = async (req, res, next) => {
 
             if(!req.cookies.refreshToken) {
                 logger.log(logger.LOGLEVEL.ERROR, { logMessage: 'Missing refresh token' })
-                next(new ForbmyjwtsecretiddenError('Missing refresh token'))
+                next(new ForbiddenError('Missing refresh token'))
                 return
             }
 
