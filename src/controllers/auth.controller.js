@@ -23,10 +23,10 @@ export const authController = ({ config, jwt, logger, userService }) => {
      
         // Sets access and refresh token cookies and loginHash cookie from authenticated google user
         const accessTokenCookieOptions = generateTokenCookieOptions(config.get('app:node_env'), { 
-            maxAge: DEFAULT_REFRESH_TOKEN_TTL_IN_SEC * 1000 * 2,
+            maxAge: DEFAULT_ACCESS_TOKEN_TTL_IN_SEC * 1000,
          })
         const refreshTokenCookieOptions = generateTokenCookieOptions(config.get('app:node_env'), { 
-            maxAge: DEFAULT_REFRESH_TOKEN_TTL_IN_SEC * 1000 * 2,
+            maxAge: DEFAULT_REFRESH_TOKEN_TTL_IN_SEC * 1000,
          })
 
         // generate access token

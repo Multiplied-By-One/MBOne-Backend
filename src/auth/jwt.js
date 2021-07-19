@@ -3,6 +3,7 @@ import { userService, logger } from '../di-container'
 import config from '../libs/config'
 import { generateTokenCookieOptions } from '../libs/cookies'
 import InvalidTokenError from '../errors/InvalidTokenError'
+import TokenNotFoundError from '../errors/TokenNotFoundError'
 import ForbiddenError from '../errors/ForbiddenError'
 
 const ACCESS_TOKEN_TTL = config.get('security:jwt:access_token_ttl')
@@ -44,15 +45,14 @@ export const generateJwtExpiryDate = expiryTtl => new Date(new Date().getTime() 
 export const validateJwt = async (req, res, next) => {
     if(!req || (req && !req.cookies)) {
         logger.log(logger.LOGLEVEL.ERROR, { logMessage: 'Missing cookies' })
-        next(new ForbiddenError('Missing cookies'))
+        next(new InvalidTokenError('Access token expired'))
         return
     }
 
     try {
         if(!req.cookies.accessToken) {
             logger.log(logger.LOGLEVEL.ERROR, { logMessage: 'Missing access token' })
-            next(new ForbiddenError('Missing access token'))
-            return
+            throw new TokenNotFoundError('access token cookie not found')
         }
         const accessToken = req.cookies.accessToken
 
@@ -65,12 +65,12 @@ export const validateJwt = async (req, res, next) => {
         next()
     } catch(err) {
         // access token expired; issue new access token using refresh token
-        if(err.name === 'TokenExpiredError') {         
+        if(err.name === 'TokenExpiredError' || err.name === 'TokenNotFoundError') {
             let user = null
 
             if(!req.cookies.refreshToken) {
                 logger.log(logger.LOGLEVEL.ERROR, { logMessage: 'Missing refresh token' })
-                next(new ForbiddenError('Missing refresh token'))
+                next(new ForbmyjwtsecretiddenError('Missing refresh token'))
                 return
             }
 
@@ -80,16 +80,15 @@ export const validateJwt = async (req, res, next) => {
                 user = await userService.getUser({ refreshToken })
                 if(!user) {
                     logger.log(logger.LOGLEVEL.ERROR, { logMessage: 'User not found in db' })
-                    next(new InvalidTokenError('Access token expired'))
+                    next(new InvalidTokenError('User not found'))
                     return
                 }
                 const { refreshToken: storedRefreshToken, refreshTokenExpiryDt } = user
                 if(!refreshTokenExpiryDt || storedRefreshToken !== refreshToken) {
                     logger.log(logger.LOGLEVEL.ERROR, { logMessage: 'Stored refresh token different from cookie refresh token' })
-                    next(new InvalidTokenError('Access token expired'))
+                    next(new InvalidTokenError('Refresh token expired'))
                     return
                 }
-    
                 // if refresh token expired already, issue both access and refresh tokens
                 if(refreshTokenExpiryDt < new Date()) {
                     next(new InvalidTokenError('Refresh token expired'))
