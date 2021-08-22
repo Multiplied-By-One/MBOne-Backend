@@ -1,6 +1,9 @@
 service: mbo-backend
 
 custom:
+  serverless-offline:
+    host: 0.0.0.0
+
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: 
