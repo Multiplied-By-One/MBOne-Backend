@@ -12,4 +12,4 @@ COPY docker/docker-entrypoint.sh /scripts/docker-entrypoint.sh
 
 RUN chmod 755 /scripts/docker-entrypoint.sh
 
-ENTRYPOINT ["/scripts/docker-entrypoint.sh"]
+ENTRYPOINT ["sh", "/scripts/docker-entrypoint.sh"]
