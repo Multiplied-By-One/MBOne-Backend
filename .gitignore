@@ -4,8 +4,10 @@ jspm_packages
 data/database.sqlite
 data/.database.built
 
-# Serverless directories
+# serverless
 .serverless
 .webpack
+.env
 .env.local
+.env.localdev
 .env.localdev.local
