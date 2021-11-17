@@ -4,7 +4,7 @@ import express from 'express'
 import {bindRoutes} from './src/routes'
 import {closeConnection} from './src/db/connection'
 import {bindPassportToApp} from './src/auth/passport'
-import cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser'
 
 const app = express()
 

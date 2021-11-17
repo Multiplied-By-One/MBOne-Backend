@@ -43,6 +43,7 @@ export const generateJwtExpiryDate = expiryTtl => new Date(new Date().getTime() 
 * @param {Function} next next function
 */
 export const validateJwt = async (req, res, next) => {
+// return next()    
     if(!req || (req && !req.cookies)) {
         logger.log(logger.LOGLEVEL.ERROR, { logMessage: 'Missing cookies' })
         next(new InvalidTokenError('Access token expired'))

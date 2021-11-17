@@ -1,10 +1,13 @@
 {
-    "app": {
-        "api_prefix": "/api/v1"
-    },
-    "security": {
-        "jwt": {
-            "secret": "myjwtsecret"
-        }
+  "app": {
+    "api_prefix": "/api/v1"
+  },
+  "security": {
+    "jwt": {
+      "secret": "myjwtsecret"
     }
+  },
+  "aws": {
+    "presigned_url_expiration_time": 60
+  }
 }

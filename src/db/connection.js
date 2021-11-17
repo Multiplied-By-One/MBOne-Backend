@@ -1,7 +1,7 @@
 import { createConnection, getConnection as getConn } from "typeorm"
 import entities from './entities'
 
-export default async function getConnection(){
+export default async function getConnection() {  
     let conn = null;
     try{
         conn = getConn()
