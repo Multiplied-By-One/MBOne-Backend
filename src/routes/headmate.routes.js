@@ -17,8 +17,9 @@ const createProfileBodySchema = Joi.object({
   filename: Joi.string().pattern(/^[\w,\s-]+\.[A-Za-z]{3,4}$/).min(1).max(255),
   filetype: Joi.string().valid('image/jpeg', 'image/png', 'image/svg+xml', 'image/webp')
 })
-
 router.post('/headmate', validator.body(createProfileBodySchema), headmateController.createProfile)
-// router.post('/headmate', headmateController.createProfile)
+
+router.get('/headmates', headmateController.getProfiles)
+router.get('/headmates/:headmateId', headmateController.getProfile)
 
 export default router

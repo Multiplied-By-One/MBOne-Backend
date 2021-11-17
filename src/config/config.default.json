@@ -8,6 +8,10 @@
     }
   },
   "aws": {
+    "http_proto": "https",
+    "host": "",
+    "region": "",
+    "bucket_name": "",
     "presigned_url_expiration_time": 60
   }
 }

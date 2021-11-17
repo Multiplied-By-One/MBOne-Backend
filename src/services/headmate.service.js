@@ -1,5 +1,5 @@
 import BadRequestError from '../errors/BadRequestError'
-// import getConnection from '../db/connection'
+import { Order } from '../db/constants'
 
 const headmateService = ({ entityValidate, getConnection, Headmate }) => {
   const getHeadmateRepository = async () => {
@@ -37,8 +37,32 @@ const headmateService = ({ entityValidate, getConnection, Headmate }) => {
     return headmate
   }
 
+  const getProfilesByUid = async (uid) => {
+    const repos = await getHeadmateRepository()
+    return repos.find({
+      select: [ 'id', 'hName', 'hGender', 'hAge', 'nProfileImgFilename' ],
+      where: {
+        userId: uid
+      },
+      order: { hName: Order.Asc }
+    })
+  }
+
+  const getProfileById = async (headmateId) => {
+    const repos = await getHeadmateRepository()
+    return repos.findOne({
+      // select: [ 'id', 'hName AS name', 'hGender AS gender', 'hAge AS age', 'nProfileImgFilename AS profileImgFilename', 'info', 'traits' ],
+      select: [ 'id', 'hName', 'hGender', 'hAge', 'nProfileImgFilename', 'info' ],
+      where: {
+        id: headmateId
+      },      
+    }) 
+  }
+
   return {
     createProfile,
+    getProfilesByUid,
+    getProfileById
   }
 }
  

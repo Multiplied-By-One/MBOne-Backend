@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
   BaseEntity
 } from "typeorm";
-import { IsOptional, IsNotEmpty, IsIn, IsInt, Min, Max, IsString, Length, IsAlphanumeric, IsEnum } from 'class-validator'
+import { IsOptional, IsNotEmpty, IsIn, IsInt, Min, Max, IsString, Length, IsAlphanumeric } from 'class-validator'
 import { EyeAccount } from "./EyeAccount";
 import { User } from "./User";
 import { MeetingEntry } from "./MeetingEntry";
@@ -37,7 +37,7 @@ export class Headmate extends BaseEntity {
   @Column("varchar", { name: "hGender", nullable: true })
   @IsIn([ Gender.Male, Gender.Female, Gender.Unspecified ])
   @Length(1, 1)
-  public hGender: string | null;
+  public hGender: string | Gender.Unspecified;
 
   @Column("int", { name: "hAge", nullable: true })
   @IsOptional()
@@ -50,6 +50,12 @@ export class Headmate extends BaseEntity {
   @IsOptional()
   @IsString()
   public nProfileImgFilename: string | null;
+
+  @Column("text", { nullable: true })
+  @IsOptional()
+  @IsString()
+  @Length(1000)
+  public info: string | null;
 
   @OneToMany(() => EyeAccount, (eyeAccount) => eyeAccount.headmate)
   public eyeAccounts: EyeAccount[];

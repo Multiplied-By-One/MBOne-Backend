@@ -5,6 +5,7 @@
     "bucket_name": "demo-bucket",
     "region": "us-west-1",
     "localstack": {
+      "http_proto": "http",
       "host": "localhost",
       "port": 4566
     }

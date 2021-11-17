@@ -21,4 +21,4 @@ export const headmateService = HeadmateService({ entityValidate, getConnection, 
 export const s3ImageUploadService = S3ImageUploadService({ config, s3Client, PutObjectCommand, getSignedUrl })
 export const authController = AuthController({ config, jwt, logger, userService })
 export const userController = UserController({ logger, userService })
-export const headmateController = HeadmateController({ headmateService, s3ImageUploadService, Headmate })
+export const headmateController = HeadmateController({ config, headmateService, s3ImageUploadService, Headmate })
