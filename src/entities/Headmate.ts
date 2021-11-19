@@ -9,12 +9,12 @@ import {
   PrimaryGeneratedColumn,
   BaseEntity
 } from "typeorm";
-import { IsOptional, IsNotEmpty, IsIn, IsInt, Min, Max, IsString, Length, IsAlphanumeric } from 'class-validator'
+import { IsOptional, IsNotEmpty, IsIn, IsInt, Min, Max, IsString, Length, IsAlphanumeric, IsJSON } from 'class-validator'
 import { EyeAccount } from "./EyeAccount";
 import { User } from "./User";
 import { MeetingEntry } from "./MeetingEntry";
 import { Reminders } from "./Reminders";
-import { Gender } from '../libs/constants'
+import { Gender } from '../libs/constants';
 
 @Index("FKHeadmateToUserId", ["userId"], {})
 @Entity("Headmate", { schema: "mbo" })
@@ -46,15 +46,21 @@ export class Headmate extends BaseEntity {
   @Max(180)
   public hAge: number | null;
 
-  @Column("varchar", { name: "nProfileImgFilename", nullable: true })
+  @Column("varchar", { name: "profileImgFilename", nullable: true })
   @IsOptional()
   @IsString()
-  public nProfileImgFilename: string | null;
+  public profileImgFilename: string | null;
+
+  @Column("simple-json", { nullable: true })
+  @IsOptional()
+  @IsJSON()
+  @Length(1,10000)
+  public traits: string | null;
 
   @Column("text", { nullable: true })
   @IsOptional()
   @IsString()
-  @Length(1000)
+  @Length(1,10000)
   public info: string | null;
 
   @OneToMany(() => EyeAccount, (eyeAccount) => eyeAccount.headmate)

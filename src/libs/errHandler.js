@@ -1,5 +1,5 @@
-import UserFacingError from '../errors/UserFacingError';
-import DatabaseError from '../errors/DatabaseError';
+import UserFacingError from '../errors/UserFacingError'
+import DatabaseError from '../errors/database/DatabaseError'
 
 /*
   [
@@ -63,7 +63,11 @@ const processEntityErr = (err) => {
   const reducer = (prevVal, currVal) => {
     if(currVal && typeof currVal.constraints === 'object') {
       const arrConstraints = Object.values(currVal.constraints)
-      const addedErrmsg = arrConstraints.join('; ')
+      let ending = ''
+      if(arrConstraints.length !== 0) {
+        ending = '; '
+      }
+      const addedErrmsg = `${arrConstraints.join("; ")}${ending}`
       return `${prevVal}${addedErrmsg}`
     }
     
@@ -112,15 +116,17 @@ const errHandler = (err, req, res, next) => {
       })
     }
 
+    if(err.err && err.err instanceof DatabaseError) {
+      return res.status(err.statusCode).json({
+        err: err.name,
+        errmsg: `${err.message}; ${err.err.message}`
+      })
+    }
+
     return res.status(err.statusCode).json({
       err: err.name,
       errmsg: err.message
     })
-  } else if(err instanceof DatabaseError) {
-    return res.status(err.statusCode).json({
-      err: err.name,
-      errmsg: err.message
-    })      
   }
 
   return res.status(500).json({
