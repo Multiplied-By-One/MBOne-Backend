@@ -2,7 +2,7 @@
   "aws": {
     "access_key_id": "baka",
     "secret_access_key": "baka",
-    "bucket_name": "demo-bucket",
+    "bucket_name": "test-bucket",
     "region": "us-west-1",
     "localstack": {
       "http_proto": "http",
