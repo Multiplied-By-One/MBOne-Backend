@@ -15,6 +15,18 @@ const headmateService = ({ config, entityValidate, s3Service, getConnection, Hea
     }
   }
 
+/**
+ * Creates a headmate profile
+ * @param {Object} params - The headmate params for creating the profile.
+ * @param {string} params.name - The name of the headmate.
+ * @param {(M|F|U)} [params.gender] - headmate gender
+ * @param {string} [params.profileImgFilename] - Profile image filename of headmate
+ * @param {string} [params.info] - Additiional info input by headmate
+ * @param {string} [params.traits] - (In json format) Traits the headmate descirbe himself
+ * @param {number} [uid] - userId the headmate belongs to
+ * @returns {Object} Created headmate object
+ * 
+ */
   const createProfile = async ({ params, uid }) => {
     const name = params.name
     const gender = params.gender || null
@@ -37,14 +49,12 @@ const headmateService = ({ config, entityValidate, s3Service, getConnection, Hea
     }
 
     const headmate = new Headmate()
-
     headmate.userId = uid
     headmate.hName = name
     headmate.hGender = gender
     headmate.hAge = age
     headmate.info = info
     headmate.traits = traits
-    
     if(profileImgFilename) {
       headmate.profileImgFilename = profileImgFilename
     }
@@ -64,6 +74,12 @@ const headmateService = ({ config, entityValidate, s3Service, getConnection, Hea
     return headmate
   }
 
+/**
+ * Gets the list of headmate profiles under a specified user ID
+ * @param {number} [uid] - userId the headmate belongs to
+ * @returns {Array} - Array of headmate profiles
+ * 
+ */
   const getProfilesByUid = async (uid) => {
     const { repos } = await getHeadmateRepository()
     return repos.find({
@@ -75,6 +91,12 @@ const headmateService = ({ config, entityValidate, s3Service, getConnection, Hea
     })
   }
 
+/**
+ * Gets the a single headmate profile by its headmate id
+ * @param {number} [headmateId] - userId the headmate belongs to
+ * @returns {Object} - Headmate profile
+ * 
+ */
   const getProfileById = async (headmateId) => {
     const { repos } = await getHeadmateRepository()
     return repos.findOne({
@@ -86,6 +108,20 @@ const headmateService = ({ config, entityValidate, s3Service, getConnection, Hea
     }) 
   }
 
+/**
+ * Update a headmate profile
+ * @param {number} [headmateId] - Headmate ID
+ * @param {number} [uid] - userId the headmate belongs to
+ * @param {Object} inputFields - The headmate params for creating the profile.
+ * @param {string} [inputFields.name] - The name of the headmate.
+ * @param {(M|F|U)} [inputFields.gender] - headmate gender
+ * @param {string} [inputFields.profileImgFilename] - Profile image filename of headmate
+ * @param {string} [inputFields.info] - Additiional info input by headmate
+ * @param {string} [inputFields.traits] - (In json format) Traits the headmate descirbe himself
+ * @returns {Object} - Object containing the S3 presigned URL for the headmate profile image
+ * @returns {string} - S3 presigned URL for the headmate profile image
+ * 
+ */
   const updateProfileById = async (headmateId, uid, inputFields) => {
     let fields = {}
     for (const [key, value] of Object.entries(inputFields)) {
@@ -149,6 +185,12 @@ const headmateService = ({ config, entityValidate, s3Service, getConnection, Hea
     }
   }
 
+/**
+ * Deletes a headmate profile by headmate ID
+ * @param {number} [headmateId] - Headmate ID
+ * @param {number} [uid] - userId the headmate belongs to
+ * 
+ */
   const deleteProfileById = async (headmateId, uid) => {
     // find existing entry from db
     const { repos } = await getHeadmateRepository()

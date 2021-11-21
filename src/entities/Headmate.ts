@@ -35,6 +35,7 @@ export class Headmate extends BaseEntity {
   public hName: string;
 
   @Column("varchar", { name: "hGender", nullable: true })
+  @IsOptional()
   @IsIn([ Gender.Male, Gender.Female, Gender.Unspecified ])
   @Length(1, 1)
   public hGender: string | Gender.Unspecified;

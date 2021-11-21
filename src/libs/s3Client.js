@@ -2,7 +2,6 @@ import { S3Client } from '@aws-sdk/client-s3'
 import { ENV } from './constants'
 import config from './config'
 
-
 const credentials = {
   accessKeyId: config.get("aws:access_key_id"),
   secretAccessKey: config.get("aws:secret_access_key"),

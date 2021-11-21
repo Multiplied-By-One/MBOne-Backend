@@ -1,26 +1,8 @@
 import { v4 as uuidv4 } from 'uuid'
 import BadRequestError from '../errors/BadRequestError'
 import NotFoundError from '../errors/NotFoundError'
-import { ENV } from '../libs/constants'
 
 const headmateController = ({ config, headmateService, s3Service, Headmate }) => {
-  const generateProfileImageUrl = ({
-    env,
-    devHttpProto,
-    prodHttpProto,
-    devHost,
-    prodHost,
-    devPort,
-    bucketName,
-    folder,
-    filename
-  }) => {
-
-    return env === ENV.DEV ?
-    `${devHttpProto}://${devHost}:${devPort}/${bucketName}/${folder}/${filename}` :
-    `${prodHttpProto}://${prodHost}/${bucketName}/${folder}/${filename}`
-  }
-
   const createProfile = async (req, res, next) => {
     const { id:uid } = req.auth
     // const uid = 1
@@ -69,7 +51,7 @@ const headmateController = ({ config, headmateService, s3Service, Headmate }) =>
       const headmates = resHeadmates.map(headmate => {
         let profileImageUrl = null
         if(headmate.profileImgFilename) {
-          profileImageUrl = generateProfileImageUrl({
+          profileImageUrl = s3Service.generateProfileImageUrl({
             env: config.get("app:node_env"),
             devHttpProto: config.get("aws:localstack:http_proto"),
             prodHttpProto: config.get("aws:http_proto"),
@@ -117,7 +99,7 @@ const headmateController = ({ config, headmateService, s3Service, Headmate }) =>
       const profileImgFilename = headmate.profileImgFilename || undefined
       let profileImageUrl = null
       if(profileImgFilename) {
-        profileImageUrl = generateProfileImageUrl({
+        profileImageUrl = s3Service.generateProfileImageUrl({
           env: config.get("app:node_env"),
           devHttpProto: config.get("aws:localstack:http_proto"),
           prodHttpProto: config.get("aws:http_proto"),
