@@ -11,16 +11,27 @@ export default async function getConnection(){
     if(conn !== null){
         return conn
     }
+    
+    const  options = process?.env?.SERVERLESS_STAGE === "localdev" ? 
+        // In the event we are using a local connection use sqllite
+        {
+            type: "sqlite",
+            database: `${process.cwd()}/data/database.sqlite`,
+            entities: entities,
+            logging: true,
+            // synchronize: true,
+            // cache: false,
+        } :
+        {
+            type: 'aurora-data-api',
+            database: process.env.DB_NAME,
+            secretArn: process.env.DB_SECRET_ARN,
+            resourceArn: process.env.DB_CLUSTER_ARN,
+            region: process.env.SERVERLESS_REGION
+        }
 
-    // In the event we are using a local connection use sqllite
-    const options = {
-        type: "sqlite",
-        database: `${process.cwd()}/data/database.sqlite`,
-        entities: entities,
-        logging: true,
-        // synchronize: true,
-        // cache: false,
-    }
+   
+    
     conn = await createConnection(options)
     return conn
 }

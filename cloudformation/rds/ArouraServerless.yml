@@ -1,0 +1,92 @@
+Resources:
+  # RDS log group, when created automatically by the serverless framework,
+  # gets orphaned and is not deleted when the cloudformation stack is deleted.
+  # To make sure it is deleted along with the stack,
+  # we create it manually and include it in the stack. 
+  RDSClusterLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+        LogGroupName: /aws/rds/cluster/${self:custom.stage}-cluster/mysql
+        RetentionInDays: ${self:provider.logRetentionInDays}
+
+  DBSubnetGroup:
+    Type: 'AWS::RDS::DBSubnetGroup'
+    Properties:
+      DBSubnetGroupDescription: ${self:provider.stackName}-DBSubnetGroup
+      SubnetIds:
+        - !Ref SubnetAPrivate	
+        - !Ref SubnetBPrivate
+
+  SGIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    DependsOn: ClusterSecurityGroup
+    Properties: 
+      Description: "RDS port ingress Self Reference"
+      FromPort: '3306'
+      GroupId: !Ref ClusterSecurityGroup
+      IpProtocol: tcp
+      SourceSecurityGroupId: !Ref ClusterSecurityGroup
+      ToPort: '3306'
+  
+  ClusterSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: !Ref 'AWS::StackName'
+      VpcId:
+        Fn::Join:
+        - ""
+        - - !Ref VPC
+      Tags:
+        - Key: Name
+          Value: ${self:provider.stackName}-AuroraClusterSecurityGroup
+        - Key: Stage
+          Value: ${self:custom.stage}
+
+
+  # Info about this resource below
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-secretsmanager-secrettargetattachment.html
+  ClusterSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: ${self:provider.stackName}-AuroraClusterSecret
+      Description: 'This is the Master secret for the RDS Aurora cluster'
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "mbo_db"}'
+        GenerateStringKey: 'password'
+        PasswordLength: 16
+        ExcludeCharacters: '"@/\'
+
+
+  SecretRDSInstanceAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Properties:
+      SecretId: !Ref ClusterSecret
+      TargetId: !Ref AuroraDBCluster
+      TargetType: AWS::RDS::DBCluster
+
+  # WARNING: Updating this could replace the DB Cluster!
+  AuroraDBCluster:
+    Type: AWS::RDS::DBCluster
+    UpdateReplacePolicy: ${self:custom.ArouraDB.DBUpdateReplacePolicy.${self:custom.stage}, self:custom.ArouraDB.DBUpdateReplacePolicy.default}
+    DeletionPolicy: ${self:custom.ArouraDB.deletionPolicy.${self:custom.stage}, self:custom.ArouraDB.deletionPolicy.default}
+    Properties:
+      DBClusterIdentifier: ${self:custom.ArouraDB.DBClusterIdentifier.${self:custom.stage}, custom.ArouraDB.DBClusterIdentifier.default}
+      DatabaseName: mbo_db_${self:custom.stage}
+      Engine: aurora-mysql
+      EngineMode: serverless
+      EngineVersion: "5.7.12"
+      EnableHttpEndpoint: true
+      BackupRetentionPeriod: ${self:custom.ArouraDB.DBBackupRetentionPeriod.${self:custom.stage}, self:custom.ArouraDB.DBBackupRetentionPeriod.default}
+      DeletionProtection: ${self:custom.ArouraDB.DBDeletionProtection.${self:custom.stage}, self:custom.ArouraDB.DBDeletionProtection.default}
+      MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref ClusterSecret, ':SecretString:username}}' ]]
+      MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref ClusterSecret, ':SecretString:password}}' ]]
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      VpcSecurityGroupIds:
+      - !Ref ClusterSecurityGroup  
+      ScalingConfiguration:
+        AutoPause: ${self:custom.ArouraDB.DBautopause.${self:custom.stage}, self:custom.ArouraDB.DBautopause.default}
+        MinCapacity: ${self:custom.ArouraDB.MinTableThroughput.${self:custom.stage}, self:custom.ArouraDB.MinTableThroughput.default}
+        MaxCapacity: ${self:custom.ArouraDB.MaxTableThroughput.${self:custom.stage}, self:custom.ArouraDB.MaxTableThroughput.default}
+      Tags:
+        - Key: Stage
+          Value: ${self:custom.stage}

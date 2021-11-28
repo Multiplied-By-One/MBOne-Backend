@@ -18,7 +18,7 @@ bindPassportToApp(app)
 //Bind app routing
 bindRoutes(app)
 
-let handler =  serverless(app);
+let handler = serverless(app);
 export async function request (event, context) {
   // you can do other things here
   const result = await handler(event, context)

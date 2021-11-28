@@ -1,0 +1,25 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "SecretsManagerDbCredentialsAccess",
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetSecretValue"
+            ],
+            "Resource": "<sercret-arn>"
+        },
+        {
+            "Sid": "RDSDataServiceAccess",
+            "Effect": "Allow",
+            "Action": [
+                "rds-data:BatchExecuteStatement",
+                "rds-data:BeginTransaction",
+                "rds-data:CommitTransaction",
+                "rds-data:ExecuteStatement",
+                "rds-data:RollbackTransaction"
+            ],
+            "Resource": "<database-arn>"
+        }
+    ]
+}
