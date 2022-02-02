@@ -1,6 +1,9 @@
 import { createConnection, getConnection as getConn } from "typeorm"
 import entities from './entities'
 
+// Include DB driver to stop tree shaking from removing the module during transpilation
+import driver from 'typeorm-aurora-data-api-driver'
+
 export default async function getConnection(){
     let conn = null;
     try{
@@ -19,7 +22,7 @@ export default async function getConnection(){
             database: `${process.cwd()}/data/database.sqlite`,
             entities: entities,
             logging: true,
-            // synchronize: true,
+            synchronize: true,
             // cache: false,
         } :
         {

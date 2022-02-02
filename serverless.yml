@@ -116,7 +116,7 @@ package: # Optional deployment packaging configuration
 
 functions:
   apiRequest:
-    handler: handler.request
+    handler: src/handler.request
     events:
       - http: ANY /
       - http: 'ANY {proxy+}'

@@ -1,14 +1,11 @@
 import userRouter from './user.routes' 
 import authRouter from './auth.routes'
-import { getConfiguredPassport } from "../auth/passport"
 import { validateJwt } from '../auth/jwt'
 import errHandler from '../libs/errHandler'
-import config from '../libs/config'
 
-const API_PREFIX = config.get('app:api_prefix')
+const API_PREFIX = "/api/v1"
 
 export function bindRoutes(app){
-    console.log(`[API PREFIX]: ${API_PREFIX}`)
     app.use(API_PREFIX, authRouter);
     
     //Apply JWT authentication to all registered routes
