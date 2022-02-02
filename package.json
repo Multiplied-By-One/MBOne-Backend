@@ -5,6 +5,7 @@
   "scripts": {
     "start": "serverless offline start --stage='localdev' --skipCacheInvalidation",
     "test": "jest",
+    "test:api:unit": "NODE_ENV=test jest ./__tests__/api/unit/**/*.spec.js",
     "lint": "node node_modules/eslint/bin/eslint.js .",
     "fixtures": "fixtures ./fixtures --config ./ormconfig.js --sync --require=ts-node/register --require=tsconfig-paths/register",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js",
@@ -44,13 +45,20 @@
     "webpack-node-externals": "1.7.2"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.41.0",
+    "@aws-sdk/s3-request-presigner": "^3.41.0",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
+    "class-validator": "^0.13.1",
+    "dotenv": "^10.0.0",
     "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
+    "express-joi-validation": "^5.0.0",
     "global": "^4.4.0",
     "http-status-codes": "^2.1.4",
+    "joi": "^17.4.2",
     "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
     "migrate": "^1.7.0",
     "nconf": "^0.11.3",
     "passport": "^0.4.1",
@@ -59,6 +67,7 @@
     "serverless-http": "^2.7.0",
     "source-map-support": "^0.5.16",
     "ts-node": "^9.1.1",
-    "typeorm": "^0.2.30"
+    "typeorm": "^0.2.30",
+    "uuid": "^8.3.2"
   }
 }

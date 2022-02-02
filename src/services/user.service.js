@@ -35,7 +35,7 @@ export async function getUserRepository(){
  * @returns {Object} User
  */
 export async function createUser(fields){
-    let rep = await getUserRepository()
+    await getUserRepository()
     let user = new User
     user.googleAccountId = fields.googleAccountId
     user.emailAddress = fields.emailAddress

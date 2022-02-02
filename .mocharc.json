@@ -1,0 +1,7 @@
+{
+  "require": "./tests/fixtures.mjs",
+  "exit": true,
+  "timeout": 50000,
+  "colors": true,
+  "check-leaks": true
+  }

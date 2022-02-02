@@ -1,3 +1,13 @@
 {
-    
+  "aws": {
+    "access_key_id": "baka",
+    "secret_access_key": "baka",
+    "bucket_name": "test-bucket",
+    "region": "us-west-1",
+    "localstack": {
+      "http_proto": "http",
+      "host": "localhost",
+      "port": 4566
+    }
+  }
 }
