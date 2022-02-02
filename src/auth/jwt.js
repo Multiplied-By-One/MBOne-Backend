@@ -7,6 +7,7 @@ import TokenNotFoundError from '../errors/TokenNotFoundError'
 import ForbiddenError from '../errors/ForbiddenError'
 
 const ACCESS_TOKEN_TTL = config.get('security:jwt:access_token_ttl')
+const BYPASS_AUTH = config.get('security:jwt:bypass_auth')
 
 const attachJwtPayloadToRequest = (req, { requestProperty='auth', payload, fieldsToInclude=[] }) => {
     req[requestProperty] = {}
@@ -84,6 +85,17 @@ export const validateJwt = async (req, res, next) => {
                     next(new InvalidTokenError('User not found'))
                     return
                 }
+
+                // Bypass all authentication rules if option given
+                if(BYPASS_AUTH){
+                    logger.log(logger.LOGLEVEL.INFO, { logMessage: 'Bypassing authentication as BYPASS_AUTH flag set' })
+                    attachJwtPayloadToRequest(req, {
+                        payload: user,
+                        fieldsToInclude: [ 'id' ]
+                    })
+                    return
+                }
+
                 const { refreshToken: storedRefreshToken, refreshTokenExpiryDt } = user
                 if(!refreshTokenExpiryDt || storedRefreshToken !== refreshToken) {
                     logger.log(logger.LOGLEVEL.ERROR, { logMessage: 'Stored refresh token different from cookie refresh token' })

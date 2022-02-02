@@ -4,7 +4,8 @@
   },
   "security": {
     "jwt": {
-      "secret": "myjwtsecret"
+      "secret": "myjwtsecret",
+      "bypass_checks": false
     }
   },
   "aws": {
