@@ -22,6 +22,11 @@ function Config() {
         nconf.set('security:jwt:refresh_token_ttl_in_sec', parseInt(process.env.REFRESH_TOKEN_TTL_IN_SEC))
     }
 
+    // Enable option to bypass token verification for localdev
+    if(process.env.BYPASS_AUTH && process.env.SERVERLESS_STAGE === 'localdev') {
+        nconf.set('security:jwt:bypass_auth', !!process.env.BYPASS_AUTH)
+    }
+
     // aws credentials info
     if(process.env.AWS_ACCESS_KEY_ID) {
         nconf.set('aws:access_key_id', process.env.AWS_ACCESS_KEY_ID)
