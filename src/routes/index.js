@@ -1,6 +1,7 @@
 import userRouter from './user.routes' 
 import authRouter from './auth.routes'
 import headmateRouter from './headmate.routes'
+import eyeAccountRouter from './eyeAccount.routes'
 import { getConfiguredPassport } from "../auth/passport"
 import { validateJwt } from '../auth/jwt'
 import errHandler from '../libs/errHandler'
@@ -18,6 +19,7 @@ export function bindRoutes(app){
     //Apply JWT authentication to all registered routes
     app.use(API_PREFIX, validateJwt, userRouter)
     app.use(API_PREFIX, validateJwt, headmateRouter)
+    app.use(API_PREFIX, validateJwt, eyeAccountRouter)
 
     // custom default error handler
     app.use(errHandler)
