@@ -14,6 +14,7 @@ export const eyeAccountController = ({ logger, eyeAccountService }) => {
 
   const createEyeAccount = async (req, res) => {
     const { id: uid } = req.auth
+    console.log(req.body.toString())
   }
 
   return {

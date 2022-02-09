@@ -16,5 +16,6 @@ const eyeAccountIdSchema = Joi.object({
 })
 
 router.get('/eyeaccount/:eyeAccountId', validator.params(eyeAccountIdSchema), eyeAccountController.getEyeAccount)
+router.post('/eyeaccount', eyeAccountController.createEyeAccount)
 
 export default router
