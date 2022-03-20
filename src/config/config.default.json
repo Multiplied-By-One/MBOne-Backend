@@ -5,7 +5,7 @@
   "security": {
     "jwt": {
       "secret": "myjwtsecret",
-      "bypass_checks": false
+      "mock_auth": false
     }
   },
   "aws": {

@@ -20,16 +20,12 @@ custom:
       SERVERLESS_REGION: ${opt:region, self:provider.region}
     localdev:
       <<: *default_env
-      stage: localdev
     dev:
       <<: *default_env
-      stage: dev
-    stating:
+    staging:
       <<: *default_env
-      stage: staging
     prod:
       <<: *default_env
-      stage: prod
 
 provider:
   name: aws
@@ -39,7 +35,8 @@ provider:
   #profile: ${self:custom.profiles.${self:provider.stage}, 'mbo'}
   memorySize: 512 # Overwrite the default memory size. Default is 1024
   logRetentionInDays: 30 # Set the default RetentionInDays for a CloudWatch LogGroup
-  #environment: ${self:custom.environment.${self:provider.stage}}
+  environment: 
+    <<: *default_env
 
 package: # Optional deployment packaging configuration
   include: # Specify the directories and files which should be included in the deployment package
