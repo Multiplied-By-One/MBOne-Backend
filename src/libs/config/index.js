@@ -23,8 +23,8 @@ function Config() {
     }
 
     // Enable option to bypass token verification for localdev
-    if(process.env.BYPASS_AUTH && process.env.SERVERLESS_STAGE === 'localdev') {
-        nconf.set('security:jwt:bypass_auth', !!process.env.BYPASS_AUTH)
+    if(process.env.MOCK_AUTH && process.env.SERVERLESS_STAGE === 'localdev') {
+        nconf.set('security:jwt:mock_auth', !!process.env.MOCK_AUTH)
     }
 
     // aws credentials info

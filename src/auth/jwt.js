@@ -5,9 +5,13 @@ import { generateTokenCookieOptions } from '../libs/cookies'
 import InvalidTokenError from '../errors/InvalidTokenError'
 import TokenNotFoundError from '../errors/TokenNotFoundError'
 import ForbiddenError from '../errors/ForbiddenError'
+import { getOneOrCreateByGoogleDetails } from '../services/user.service'
 
 const ACCESS_TOKEN_TTL = config.get('security:jwt:access_token_ttl')
-const BYPASS_AUTH = config.get('security:jwt:bypass_auth')
+const MOCK_AUTH = config.get('security:jwt:mock_auth')
+const MOCK_AUTH_HEADER_ID = "mock-google-id"
+const MOCK_AUTH_HEADER_EMAIL = "mock-google-email"
+
 
 const attachJwtPayloadToRequest = (req, { requestProperty='auth', payload, fieldsToInclude=[] }) => {
     req[requestProperty] = {}
@@ -51,6 +55,31 @@ export const validateJwt = async (req, res, next) => {
         return
     }
 
+    // Bypass all authentication and use stubs if the mock authentication env var is set to true
+    if(MOCK_AUTH){
+        logger.log(logger.LOGLEVEL.INFO, { logMessage: 'Bypassing authentication as MOCK_AUTH flag set' })
+        
+        if(!(MOCK_AUTH_HEADER_ID in req.headers) || !(MOCK_AUTH_HEADER_EMAIL in req.headers)){
+            logger.log(logger.LOGLEVEL.ERROR, { logMessage: 'Missing mock auth info.' })
+            next(new ForbiddenError("Required headers for mock authentication scheme missing." +
+                                        `"${MOCK_AUTH_HEADER_ID}" or "${MOCK_AUTH_HEADER_EMAIL}" headers required."`))
+            return
+        }
+
+        const googleAccountID = parseInt(req.headers[MOCK_AUTH_HEADER_ID])
+        const googleAccountEmail = req.headers[MOCK_AUTH_HEADER_EMAIL]
+        const user = await getOneOrCreateByGoogleDetails(googleAccountID, googleAccountEmail)
+        attachJwtPayloadToRequest(req, {
+            payload: {
+                id: user.id
+            },
+            fieldsToInclude: [ 'id' ]
+        })
+
+        next()
+        return
+    }
+
     try {
         if(!req.cookies.accessToken) {
             logger.log(logger.LOGLEVEL.ERROR, { logMessage: 'Missing access token' })
@@ -83,16 +112,6 @@ export const validateJwt = async (req, res, next) => {
                 if(!user) {
                     logger.log(logger.LOGLEVEL.ERROR, { logMessage: 'User not found in db' })
                     next(new InvalidTokenError('User not found'))
-                    return
-                }
-
-                // Bypass all authentication rules if option given
-                if(BYPASS_AUTH){
-                    logger.log(logger.LOGLEVEL.INFO, { logMessage: 'Bypassing authentication as BYPASS_AUTH flag set' })
-                    attachJwtPayloadToRequest(req, {
-                        payload: user,
-                        fieldsToInclude: [ 'id' ]
-                    })
                     return
                 }
 
