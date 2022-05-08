@@ -1,7 +1,7 @@
 import nconf from 'nconf'
 
 function Config() {
-    nconf.argv().env()
+    nconf.env()
     const env = nconf.get(process.env.NODE_ENV) || 'dev'
     nconf.file(env, 'src/config/config.' + env + '.json')
     nconf.file('default', 'src/config/config.default.json')

@@ -1,5 +1,5 @@
 import util from 'util'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import { generateJWT, generateJwtExpiryDate } from '../auth/jwt';
 import UnauthorizedError from '../errors/UnauthorizedError'
 import { generateTokenCookieOptions } from '../libs/cookies'

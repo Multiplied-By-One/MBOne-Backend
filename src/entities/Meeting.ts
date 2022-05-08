@@ -6,7 +6,8 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  BaseEntity
+  BaseEntity,
+  Relation
 } from "typeorm";
 import { MeetingSpace } from "./MeetingSpace";
 import { MeetingEntry } from "./MeetingEntry";
@@ -38,5 +39,5 @@ export class Meeting extends BaseEntity {
   public meetingSpace: MeetingSpace;
 
   @OneToMany(() => MeetingEntry, (meetingEntry) => meetingEntry.meeting)
-  public meetingEntries: MeetingEntry[];
+  public meetingEntries: Relation<MeetingEntry>[];
 }

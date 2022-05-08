@@ -1,5 +1,5 @@
 import { createConnection, getConnection as getConn } from "typeorm"
-import entities from './entities'
+import * as entities from './entities'
 
 // Include DB driver to stop tree shaking from removing the module during transpilation
 import driver from 'typeorm-aurora-data-api-driver'

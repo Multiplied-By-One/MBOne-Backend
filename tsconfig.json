@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "es6",
-    "module": "commonjs",
+    "module": "es6",
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "sourceMap": true,
     "lib": [
-      "es5",
-      "es6",
+      "es6"
     ],
   },
   "include": [

@@ -6,7 +6,8 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  BaseEntity
+  BaseEntity,
+  Relation
 } from "typeorm";
 import { EyeAccount } from "./EyeAccount";
 import { User } from "./User";
@@ -32,18 +33,18 @@ export class Headmate extends BaseEntity {
   public hAge: number | null;
 
   @OneToMany(() => EyeAccount, (eyeAccount) => eyeAccount.headmate)
-  public eyeAccounts: EyeAccount[];
+  public eyeAccounts: Relation<EyeAccount>[];
 
   @ManyToOne(() => User, (user) => user.headmates, {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",
   })
   @JoinColumn([{ name: "UserID", referencedColumnName: "id" }])
-  public user: User;
+  public user: Relation<User>;
 
   @OneToMany(() => MeetingEntry, (meetingEntry) => meetingEntry.headmate)
-  public meetingEntries: MeetingEntry[];
+  public meetingEntries: Relation<MeetingEntry>[];
 
   @OneToMany(() => Reminders, (reminders) => reminders.headmate)
-  public reminders: Reminders[];
+  public reminders: Relation<Reminders>[];
 }

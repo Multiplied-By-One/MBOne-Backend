@@ -70,7 +70,7 @@ Resources:
     UpdateReplacePolicy: ${self:custom.ArouraDB.DBUpdateReplacePolicy.${self:custom.stage}, self:custom.ArouraDB.DBUpdateReplacePolicy.default}
     DeletionPolicy: ${self:custom.ArouraDB.deletionPolicy.${self:custom.stage}, self:custom.ArouraDB.deletionPolicy.default}
     Properties:
-      DBClusterIdentifier: ${self:custom.ArouraDB.DBClusterIdentifier.${self:custom.stage}, custom.ArouraDB.DBClusterIdentifier.default}
+      DBClusterIdentifier: ${self:custom.ArouraDB.DBClusterIdentifier.${self:custom.stage}, self:custom.ArouraDB.DBClusterIdentifier.default}
       DatabaseName: mbo_db_${self:custom.stage}
       Engine: aurora-mysql
       EngineMode: serverless

@@ -1,4 +1,4 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, BaseEntity } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, BaseEntity, Relation } from "typeorm";
 import { User } from "./User";
 
 @Index("FKSystemRule913825", ["userId"], {})
@@ -30,5 +30,5 @@ export class SystemRule extends BaseEntity {
     onUpdate: "RESTRICT",
   })
   @JoinColumn([{ name: "userID", referencedColumnName: "id" }])
-  public user: User;
+  public user: Relation<User>;
 }

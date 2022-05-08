@@ -5,7 +5,8 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  BaseEntity
+  BaseEntity,
+  Relation
 } from "typeorm";
 import { User } from "./User";
 import { Headmate } from "./Headmate";
@@ -37,12 +38,12 @@ export class Reminders extends BaseEntity {
     onUpdate: "RESTRICT",
   })
   @JoinColumn([{ name: "AssigneeID", referencedColumnName: "id" }])
-  public assignee: User;
+  public assignee: Relation<User>;
 
   @ManyToOne(() => Headmate, (headmate) => headmate.reminders, {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",
   })
   @JoinColumn([{ name: "HeadmateID", referencedColumnName: "id" }])
-  public headmate: Headmate;
+  public headmate: Relation<Headmate>;
 }

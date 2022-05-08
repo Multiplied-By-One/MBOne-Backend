@@ -5,7 +5,8 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  BaseEntity
+  BaseEntity,
+  Relation
 } from "typeorm";
 import { Headmate } from "./Headmate";
 import { Meeting } from "./Meeting";
@@ -34,12 +35,12 @@ export class MeetingEntry extends BaseEntity {
     onUpdate: "RESTRICT",
   })
   @JoinColumn([{ name: "HeadmateID", referencedColumnName: "id" }])
-  public headmate: Headmate;
+  public headmate: Relation<Headmate>;
 
   @ManyToOne(() => Meeting, (meeting) => meeting.meetingEntries, {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",
   })
   @JoinColumn([{ name: "MeetingID", referencedColumnName: "id" }])
-  public meeting: Meeting;
+  public meeting: Relation<Meeting>;
 }

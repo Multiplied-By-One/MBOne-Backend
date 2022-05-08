@@ -1,11 +1,14 @@
 service: mbo-backend
-
+useDotenv: true
 custom:
-  webpack:
-    webpackConfig: ./webpack.config.js
-    includeModules: 
-      forceExclude:
-        - aws-sdk
+  bundle:
+    linting: false
+    externals:
+      - sqlite3
+    aliases:
+      - 'typeorm': './node_modules/typeorm/browser' # see https://github.com/typeorm/typeorm/issues/8714
+    forceExclude:
+      - aws-sdk
 
   ArouraDB:
     DBClusterIdentifier:
@@ -90,7 +93,7 @@ provider:
   profile: ${self:custom.profiles.${self:provider.stage}, 'mbo'}
   memorySize: 512 # Overwrite the default memory size. Default is 1024
   logRetentionInDays: 30 # Set the default RetentionInDays for a CloudWatch LogGroup
-  #environment: ${self:custom.environment.${self:provider.stage}}
+  environment: ${self:custom.environment.${self:provider.stage}}
 
   iamRoleStatements:
     # Allow access to AWS Secrets mananger
@@ -118,12 +121,13 @@ functions:
   apiRequest:
     handler: src/handler.request
     events:
-      - http: ANY /
-      - http: 'ANY {proxy+}'
+      - httpApi: '*'
+      - httpApi:
+          method: '*'
+          path: /any/method
 
 plugins:
-  - serverless-dotenv-plugin
-  - serverless-webpack
+  - serverless-bundle
   - serverless-offline
 
 resources:

@@ -5,7 +5,8 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  BaseEntity
+  BaseEntity,
+  Relation
 } from "typeorm";
 import { Journal } from "./Journal";
 
@@ -36,5 +37,5 @@ export class JournalEntry extends BaseEntity {
     onUpdate: "RESTRICT",
   })
   @JoinColumn([{ name: "JournalID", referencedColumnName: "id" }])
-  public journal: Journal;
+  public journal: Relation<Journal>;
 }

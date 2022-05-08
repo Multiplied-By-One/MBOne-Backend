@@ -1,4 +1,4 @@
-import { Entity, OneToMany, PrimaryGeneratedColumn, Column, BaseEntity} from "typeorm";
+import { Entity, OneToMany, PrimaryGeneratedColumn, Column, BaseEntity, Relation} from "typeorm";
 import { EyeAccount } from "./EyeAccount";
 import { Headmate } from "./Headmate";
 import { MeetingSpace } from "./MeetingSpace";
@@ -23,17 +23,17 @@ export class User extends BaseEntity {
   public refreshTokenExpiryDt: Date;
 
   @OneToMany(() => EyeAccount, (eyeAccount) => eyeAccount.user)
-  public eyeAccounts: EyeAccount[];
+  public eyeAccounts: Relation<EyeAccount>[];
 
   @OneToMany(() => Headmate, (headmate) => headmate.user)
-  public headmates: Headmate[];
+  public headmates: Relation<Headmate>[];
 
   @OneToMany(() => MeetingSpace, (meetingSpace) => meetingSpace.user)
-  public meetingSpaces: MeetingSpace[];
+  public meetingSpaces: Relation<MeetingSpace>[];
 
   @OneToMany(() => Reminders, (reminders) => reminders.assignee)
-  public reminders: Reminders[];
+  public reminders: Relation<Reminders>[];
 
   @OneToMany(() => SystemRule, (systemRule) => systemRule.user)
-  public systemRules: SystemRule[];
+  public systemRules: Relation<SystemRule>[];
 }

@@ -6,7 +6,8 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  BaseEntity
+  BaseEntity,
+  Relation
 } from "typeorm";
 import { EyeAccount } from "./EyeAccount";
 import { JournalEntry } from "./JournalEntry";
@@ -25,8 +26,8 @@ export class Journal extends BaseEntity {
     onUpdate: "RESTRICT",
   })
   @JoinColumn([{ name: "EyeAccountID", referencedColumnName: "id" }])
-  public eyeAccount: EyeAccount;
+  public eyeAccount: Relation<EyeAccount>;
 
   @OneToMany(() => JournalEntry, (journalEntry) => journalEntry.journal)
-  public journalEntries: JournalEntry[];
+  public journalEntries: Relation<JournalEntry>[];
 }

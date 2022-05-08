@@ -1,4 +1,4 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, BaseEntity } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, BaseEntity, Relation } from "typeorm";
 import { EyeAccount } from "./EyeAccount";
 
 @Index("FKEyeboxToSenderId", ["senderId"], {})
@@ -28,12 +28,12 @@ export class Eyebox extends BaseEntity {
     onUpdate: "RESTRICT",
   })
   @JoinColumn([{ name: "ReceiverID", referencedColumnName: "id" }])
-  public receiver: EyeAccount;
+  public receiver: Relation<EyeAccount>;
 
   @ManyToOne(() => EyeAccount, (eyeAccount) => eyeAccount.eyeboxes2, {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",
   })
   @JoinColumn([{ name: "SenderID", referencedColumnName: "id" }])
-  public sender: EyeAccount;
+  public sender: Relation<EyeAccount>;
 }

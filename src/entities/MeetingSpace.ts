@@ -6,7 +6,8 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  BaseEntity
+  BaseEntity,
+  Relation
 } from "typeorm";
 import { Meeting } from "./Meeting";
 import { User } from "./User";
@@ -21,12 +22,12 @@ export class MeetingSpace extends BaseEntity {
   public userId: number;
 
   @OneToMany(() => Meeting, (meeting) => meeting.meetingSpace)
-  public meetings: Meeting[];
+  public meetings: Relation<Meeting>[];
 
   @ManyToOne(() => User, (user) => user.meetingSpaces, {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",
   })
   @JoinColumn([{ name: "UserID", referencedColumnName: "id" }])
-  public user: User;
+  public user: Relation<User>;
 }

@@ -2,8 +2,6 @@
   "plugins": [
     "source-map-support",
     ["@babel/plugin-proposal-decorators", { "legacy": true }],
-    ["@babel/plugin-proposal-class-properties", { "loose" : true }],
-    ["@babel/plugin-proposal-private-methods", { "loose" : true }]
   ],
   "presets": [
     "@babel/typescript",
@@ -11,7 +9,9 @@
       "@babel/preset-env",
       {
         "targets": {
-          "node": true
+          "node": true,
+          "shippedProposals": true,
+          "loose": true
         }
       }
     ]

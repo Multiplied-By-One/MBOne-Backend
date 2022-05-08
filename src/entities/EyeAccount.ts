@@ -1,4 +1,4 @@
-import {Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, BaseEntity} from "typeorm";
+import {Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, BaseEntity, Relation} from "typeorm";
 import { User } from "./User";
 import { Headmate } from "./Headmate";
 import { Eyebox } from "./Eyebox";
@@ -40,21 +40,21 @@ export class EyeAccount extends BaseEntity {
     onUpdate: "RESTRICT",
   })
   @JoinColumn([{ name: "UserID", referencedColumnName: "id" }])
-  public user: User;
+  public user: Relation<User>;
 
   @ManyToOne(() => Headmate, (headmate) => headmate.eyeAccounts, {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",
   })
   @JoinColumn([{ name: "HeadmateID", referencedColumnName: "id" }])
-  public headmate: Headmate;
+  public headmate: Relation<Headmate>;
 
   @OneToMany(() => Eyebox, (eyebox) => eyebox.receiver)
-  public eyeboxes: Eyebox[];
+  public eyeboxes: Relation<Eyebox>[];
 
   @OneToMany(() => Eyebox, (eyebox) => eyebox.sender)
-  public eyeboxes2: Eyebox[];
+  public eyeboxes2: Relation<Eyebox>[];
 
   @OneToMany(() => Journal, (journal) => journal.eyeAccount)
-  public journals: Journal[];
+  public journals: Relation<Journal>[];
 }
